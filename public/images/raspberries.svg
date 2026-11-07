@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="560" viewBox="0 0 800 560" fill="none">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="800" y2="560" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#8B3A55"/>
+      <stop offset="1" stop-color="#A7B596" stop-opacity="0.85"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="560" fill="url(#g)"/>
+  <path d="M0 420C120 380 220 460 340 430C460 400 540 340 680 360C740 370 780 390 800 410V560H0V420Z" fill="#8B3A55" opacity="0.35"/>
+
+  <path d="M360 70c20 45 58 70 100 76-42 8-80 34-100 76-20-42-58-68-100-76 42-6 80-31 100-76z" fill="#F8F6EF" opacity="0.55"/>
+  <circle cx="180" cy="190" r="54" fill="#A7B596" opacity="0.9"/>
+  <circle cx="250" cy="230" r="42" fill="#F8F6EF" opacity="0.75"/>
+  <circle cx="300" cy="165" r="36" fill="#A7B596" opacity="0.7"/>
+
+  <text x="40" y="300" fill="#F8F6EF" font-family="Georgia, serif" font-size="36" font-weight="600">Малина</text>
+</svg>
