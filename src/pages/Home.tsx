@@ -3,35 +3,34 @@ import { CategoryCard } from '../components/CategoryCard'
 import { ProductCard } from '../components/ProductCard'
 import { getFeaturedProducts } from '../data/products'
 import { site } from '../data/site'
+import { getSeasonTheme } from '../lib/season'
 import type { Category } from '../types/product'
 
 const CATEGORIES: Category[] = ['fruits', 'vegetables', 'berries', 'preserves', 'other']
 
 export function Home() {
   const featured = getFeaturedProducts()
+  const season = getSeasonTheme()
 
   return (
     <>
       <section className="relative min-h-[calc(100svh-var(--header-h))] overflow-hidden">
         <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: "url('/images/hero.svg')" }}
+          className="absolute inset-0 bg-cover bg-center transition-[background-image] duration-500"
+          style={{ backgroundImage: `url('${season.heroImage}')` }}
           aria-hidden="true"
         />
-        <div
-          className="absolute inset-0 bg-[linear-gradient(105deg,rgba(48,53,45,0.78)_0%,rgba(63,83,64,0.55)_48%,rgba(48,53,45,0.25)_100%)]"
-          aria-hidden="true"
-        />
+        <div className="hero-overlay absolute inset-0" aria-hidden="true" />
 
         <div className="container-page relative flex min-h-[calc(100svh-var(--header-h))] flex-col justify-end pb-16 pt-20 sm:justify-center sm:pb-24">
           <p className="fade-up font-display text-[clamp(2.6rem,8vw,5.4rem)] leading-[0.95] tracking-[0.02em] text-[var(--color-bg)]">
             {site.brand}
           </p>
           <h1 className="fade-up-delay mt-4 max-w-xl font-display text-[clamp(1.55rem,3.6vw,2.35rem)] font-medium text-[var(--color-accent)]">
-            {site.tagline}
+            {season.tagline}
           </h1>
           <p className="fade-up-delay-2 mt-4 max-w-md text-base text-[color-mix(in_srgb,var(--color-bg)_88%,transparent)] sm:text-lg">
-            {site.shortPitch} {site.location}.
+            {season.pitch} {site.location}.
           </p>
           <div className="fade-up-delay-2 mt-8 flex flex-wrap gap-3">
             <Link

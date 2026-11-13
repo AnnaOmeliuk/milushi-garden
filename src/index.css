@@ -1,6 +1,7 @@
 @import 'tailwindcss';
 
 :root {
+  /* Summer baseline — also used before JS applies data-season */
   --color-bg: #f8f6ef;
   --color-green: #536b4f;
   --color-soft-green: #a7b596;
@@ -8,9 +9,95 @@
   --color-text: #30352d;
   --color-cream: #f1eee4;
   --color-leaf: #3f5340;
+  --glow-a: rgba(167, 181, 150, 0.28);
+  --glow-b: rgba(229, 185, 92, 0.18);
+  --pattern-color: 83, 107, 79;
+  --hero-overlay: linear-gradient(
+    105deg,
+    rgba(48, 53, 45, 0.78) 0%,
+    rgba(63, 83, 64, 0.55) 48%,
+    rgba(48, 53, 45, 0.25) 100%
+  );
   --font-display: 'Fraunces', 'Georgia', serif;
   --font-body: 'Source Sans 3', 'Segoe UI', sans-serif;
   --header-h: 4.25rem;
+  --season-transition: background-color 0.45s ease, color 0.45s ease, border-color 0.45s ease;
+}
+
+html[data-season='spring'] {
+  --color-bg: #f4f7f2;
+  --color-green: #4a6b45;
+  --color-soft-green: #b4c9a8;
+  --color-accent: #e0b86a;
+  --color-text: #2f362c;
+  --color-cream: #eef3ea;
+  --color-leaf: #3d5a38;
+  --glow-a: rgba(180, 201, 168, 0.32);
+  --glow-b: rgba(212, 180, 168, 0.2);
+  --pattern-color: 74, 107, 69;
+  --hero-overlay: linear-gradient(
+    105deg,
+    rgba(47, 54, 44, 0.76) 0%,
+    rgba(61, 90, 56, 0.52) 48%,
+    rgba(47, 54, 44, 0.22) 100%
+  );
+}
+
+html[data-season='summer'] {
+  --color-bg: #f8f6ef;
+  --color-green: #536b4f;
+  --color-soft-green: #a7b596;
+  --color-accent: #e5b95c;
+  --color-text: #30352d;
+  --color-cream: #f1eee4;
+  --color-leaf: #3f5340;
+  --glow-a: rgba(167, 181, 150, 0.28);
+  --glow-b: rgba(229, 185, 92, 0.18);
+  --pattern-color: 83, 107, 79;
+  --hero-overlay: linear-gradient(
+    105deg,
+    rgba(48, 53, 45, 0.78) 0%,
+    rgba(63, 83, 64, 0.55) 48%,
+    rgba(48, 53, 45, 0.25) 100%
+  );
+}
+
+html[data-season='autumn'] {
+  --color-bg: #f5f0e6;
+  --color-green: #6b5a3e;
+  --color-soft-green: #c4a574;
+  --color-accent: #d4923a;
+  --color-text: #3a3228;
+  --color-cream: #efe6d6;
+  --color-leaf: #4a4030;
+  --glow-a: rgba(196, 165, 116, 0.28);
+  --glow-b: rgba(212, 146, 58, 0.2);
+  --pattern-color: 107, 90, 62;
+  --hero-overlay: linear-gradient(
+    105deg,
+    rgba(58, 50, 40, 0.8) 0%,
+    rgba(74, 64, 48, 0.58) 48%,
+    rgba(58, 50, 40, 0.28) 100%
+  );
+}
+
+html[data-season='winter'] {
+  --color-bg: #f2f4f3;
+  --color-green: #3d5248;
+  --color-soft-green: #9aada3;
+  --color-accent: #c9b896;
+  --color-text: #2c3330;
+  --color-cream: #e8ecea;
+  --color-leaf: #2f433a;
+  --glow-a: rgba(154, 173, 163, 0.3);
+  --glow-b: rgba(201, 184, 150, 0.16);
+  --pattern-color: 61, 82, 72;
+  --hero-overlay: linear-gradient(
+    105deg,
+    rgba(44, 51, 48, 0.8) 0%,
+    rgba(47, 67, 58, 0.58) 48%,
+    rgba(44, 51, 48, 0.26) 100%
+  );
 }
 
 @layer base {
@@ -30,12 +117,13 @@
     font-family: var(--font-body);
     color: var(--color-text);
     background:
-      radial-gradient(ellipse 80% 50% at 10% -10%, rgba(167, 181, 150, 0.28), transparent 55%),
-      radial-gradient(ellipse 70% 45% at 100% 0%, rgba(229, 185, 92, 0.18), transparent 50%),
+      radial-gradient(ellipse 80% 50% at 10% -10%, var(--glow-a), transparent 55%),
+      radial-gradient(ellipse 70% 45% at 100% 0%, var(--glow-b), transparent 50%),
       linear-gradient(180deg, var(--color-bg) 0%, var(--color-cream) 100%);
     background-attachment: fixed;
     line-height: 1.55;
     -webkit-font-smoothing: antialiased;
+    transition: var(--season-transition);
   }
 
   body::before {
@@ -45,7 +133,11 @@
     pointer-events: none;
     z-index: 0;
     opacity: 0.045;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cpath fill='%23536B4F' d='M60 8c6 14 18 22 32 24-14 2-26 10-32 24-6-14-18-22-32-24 14-2 26-10 32-24zm0 56c4 9 12 14 21 16-9 1-17 7-21 16-4-9-12-15-21-16 9-2 17-7 21-16z'/%3E%3C/svg%3E");
+    background-color: rgb(var(--pattern-color));
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cpath fill='%23000' d='M60 8c6 14 18 22 32 24-14 2-26 10-32 24-6-14-18-22-32-24 14-2 26-10 32-24zm0 56c4 9 12 14 21 16-9 1-17 7-21 16-4-9-12-15-21-16 9-2 17-7 21-16z'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cpath fill='%23000' d='M60 8c6 14 18 22 32 24-14 2-26 10-32 24-6-14-18-22-32-24 14-2 26-10 32-24zm0 56c4 9 12 14 21 16-9 1-17 7-21 16-4-9-12-15-21-16 9-2 17-7 21-16z'/%3E%3C/svg%3E");
+    -webkit-mask-size: 120px 120px;
+    mask-size: 120px 120px;
   }
 
   #root {
@@ -111,6 +203,10 @@
     padding-block: clamp(3.5rem, 8vw, 6rem);
   }
 
+  .hero-overlay {
+    background: var(--hero-overlay);
+  }
+
   .fade-up {
     animation: fade-up 0.85s ease both;
   }
@@ -143,6 +239,10 @@
 
     html {
       scroll-behavior: auto;
+    }
+
+    body {
+      transition: none;
     }
   }
 }
