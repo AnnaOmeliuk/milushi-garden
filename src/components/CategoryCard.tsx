@@ -6,6 +6,7 @@ const CATEGORY_BLURBS: Record<Category, string> = {
   fruits: 'Яблука, груші та сезонний сад',
   vegetables: 'З городу — прямо до столу',
   berries: 'Короткий сезон, повний смак',
+  seedlings: 'Розсада для весняної висадки',
   preserves: 'Варення, соки, заготівлі',
   other: 'Мед і супутні смаколики',
 }

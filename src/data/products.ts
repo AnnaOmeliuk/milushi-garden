@@ -1,4 +1,21 @@
-import type { Product } from '../types/product'
+import { currentSeason } from './season'
+import type { Availability, Product, Season } from '../types/product'
+
+const kgPacks = [
+  { id: '1kg', label: '1 кг', kg: 1 },
+  { id: '5kg', label: 'Сітка 5 кг', kg: 5 },
+]
+
+const berryPacks = [
+  { id: '0.5kg', label: '0,5 кг', kg: 0.5 },
+  { id: '1kg', label: '1 кг', kg: 1 },
+]
+
+const seedlingPacks = [
+  { id: '10pcs', label: '10 шт' },
+  { id: '20pcs', label: '20 шт' },
+  { id: '50pcs', label: '50 шт' },
+]
 
 export const products: Product[] = [
   {
@@ -8,14 +25,11 @@ export const products: Product[] = [
     shortDescription: 'Сім сортів із нашого саду — від солодких до кислуватих.',
     description:
       'Яблука з сімейного саду в Милушах. Збираємо вручну в сезон достигання. Обирайте сорт і фасування — підготуємо свіжу партію під ваше замовлення.',
-    images: [
-      '/images/apples-1.svg',
-      '/images/apples-2.svg',
-      '/images/apples-3.svg',
-    ],
+    images: ['/images/apples-1.svg', '/images/apples-2.svg', '/images/apples-3.svg'],
     pricePerKg: 35,
     unit: 'kg',
     availability: 'in_stock',
+    seasons: ['autumn', 'winter'],
     featured: true,
     variants: [
       { id: 'golden', name: 'Голден Делішес', note: 'Солодкі, жовті, для десерту' },
@@ -43,79 +57,66 @@ export const products: Product[] = [
     images: ['/images/pears.svg'],
     pricePerKg: 45,
     unit: 'kg',
-    availability: 'limited',
+    availability: 'in_stock',
+    seasons: ['autumn'],
     featured: true,
-    packs: [
-      { id: '1kg', label: '1 кг', kg: 1 },
-      { id: '5kg', label: 'Сітка 5 кг', kg: 5 },
-    ],
+    packs: kgPacks,
   },
   {
-    slug: 'kartoplia',
-    name: 'Картопля',
-    category: 'vegetables',
-    shortDescription: 'Молода й столова картопля з городу.',
+    slug: 'chereshnia',
+    name: 'Черешня',
+    category: 'fruits',
+    shortDescription: 'Солодка черешня літнього збору.',
     description:
-      'Картопля з наших грядок. Фасуємо сітками під замовлення. Добре вариться й смажиться — без зайвої «хімії» з полиць супермаркету.',
-    images: ['/images/potatoes.svg'],
-    pricePerKg: 18,
+      'Черешня з саду в Милушах. Збираємо стиглою — краще забирати в день збору. Ціна й фото — орієнтовні, уточнюємо в сезон.',
+    images: ['/images/cherries.svg'],
+    pricePerKg: 90,
     unit: 'kg',
     availability: 'in_stock',
-    featured: true,
-    packs: [
-      { id: '5kg', label: 'Сітка 5 кг', kg: 5 },
-      { id: '10kg', label: 'Сітка 10 кг', kg: 10 },
-      { id: '20kg', label: 'Мішок 20 кг', kg: 20 },
-    ],
+    seasons: ['summer'],
+    packs: berryPacks,
   },
   {
-    slug: 'morkva',
-    name: 'Морква',
-    category: 'vegetables',
-    shortDescription: 'Солодка морква прямого збору.',
+    slug: 'vyshnia',
+    name: 'Вишня',
+    category: 'fruits',
+    shortDescription: 'Кисло-солодка вишня для варення й пирогів.',
     description:
-      'Морква з городу в Милушах — соковита й солодка. Підходить для соків, рагу й свіжих салатів.',
-    images: ['/images/carrots.svg'],
-    pricePerKg: 22,
+      'Вишня з наших дерев. Ідеальна для компотів, варення й свіжого споживання. Плейсхолдер ціни — оновимо в сезон.',
+    images: ['/images/sour-cherries.svg'],
+    pricePerKg: 70,
     unit: 'kg',
     availability: 'in_stock',
-    packs: [
-      { id: '1kg', label: '1 кг', kg: 1 },
-      { id: '5kg', label: 'Сітка 5 кг', kg: 5 },
-    ],
+    seasons: ['summer'],
+    packs: berryPacks,
   },
   {
-    slug: 'buriak',
-    name: 'Буряк',
-    category: 'vegetables',
-    shortDescription: 'Столовий буряк для борщу й салатів.',
-    description:
-      'Буряк із наших грядок. Насичений колір і смак — основа домашнього борщу.',
-    images: ['/images/beets.svg'],
-    pricePerKg: 20,
-    unit: 'kg',
-    availability: 'in_stock',
-    packs: [
-      { id: '1kg', label: '1 кг', kg: 1 },
-      { id: '5kg', label: 'Сітка 5 кг', kg: 5 },
-    ],
-  },
-  {
-    slug: 'polunytsia',
-    name: 'Полуниця',
+    slug: 'smorodyna',
+    name: 'Смородина',
     category: 'berries',
-    shortDescription: 'Сезонна полуниця з грядки.',
+    shortDescription: 'Чорна й червона смородина з кущів.',
     description:
-      'Полуниця збирається вранці в день видачі. Солодка, ароматна — лише в свій короткий сезон.',
-    images: ['/images/strawberries.svg'],
-    pricePerKg: 120,
+      'Смородина з наших кущів — для варення, заморозки й свіжих десертів. Фото та ціна — плейсхолдери до сезону.',
+    images: ['/images/currant.svg'],
+    pricePerKg: 80,
     unit: 'kg',
-    availability: 'out_of_stock',
-    featured: true,
-    packs: [
-      { id: '1kg', label: '1 кг', kg: 1 },
-      { id: '2kg', label: '2 кг', kg: 2 },
-    ],
+    availability: 'in_stock',
+    seasons: ['summer'],
+    packs: berryPacks,
+  },
+  {
+    slug: 'agrus',
+    name: 'Аґрус',
+    category: 'berries',
+    shortDescription: 'Ароматний аґрус літнього сезону.',
+    description:
+      'Аґрус з городу в Милушах. Соковитий, з характерною кислинкою. Наявність лише в короткий сезон.',
+    images: ['/images/gooseberry.svg'],
+    pricePerKg: 75,
+    unit: 'kg',
+    availability: 'in_stock',
+    seasons: ['summer'],
+    packs: berryPacks,
   },
   {
     slug: 'malyna',
@@ -127,11 +128,161 @@ export const products: Product[] = [
     images: ['/images/raspberries.svg'],
     pricePerKg: 150,
     unit: 'kg',
-    availability: 'limited',
+    availability: 'in_stock',
+    seasons: ['summer'],
+    featured: true,
+    packs: berryPacks,
+  },
+  {
+    slug: 'polunytsia',
+    name: 'Полуниця',
+    category: 'berries',
+    shortDescription: 'Сезонна полуниця з грядки.',
+    description:
+      'Полуниця збирається вранці в день видачі. Солодка, ароматна — лише в свій короткий сезон.',
+    images: ['/images/strawberries.svg'],
+    pricePerKg: 120,
+    unit: 'kg',
+    availability: 'in_stock',
+    seasons: ['summer'],
+    featured: true,
     packs: [
-      { id: '0.5kg', label: '0,5 кг', kg: 0.5 },
       { id: '1kg', label: '1 кг', kg: 1 },
+      { id: '2kg', label: '2 кг', kg: 2 },
     ],
+  },
+  {
+    slug: 'lokhyna',
+    name: 'Лохина',
+    category: 'berries',
+    shortDescription: 'Солодка лохина з наших кущів.',
+    description:
+      'Лохина — ніжні ягоди для свіжого споживання й заморозки. Ціна орієнтовна, підтверджуємо в сезон.',
+    images: ['/images/blueberry.svg'],
+    pricePerKg: 200,
+    unit: 'kg',
+    availability: 'in_stock',
+    seasons: ['summer'],
+    packs: berryPacks,
+  },
+  {
+    slug: 'ogirky',
+    name: 'Огірки',
+    category: 'vegetables',
+    shortDescription: 'Хрусткі огірки з городу.',
+    description:
+      'Огірки з грядок у Милушах — для салатів і засолювання. Збираємо регулярно влітку.',
+    images: ['/images/cucumbers.svg'],
+    pricePerKg: 30,
+    unit: 'kg',
+    availability: 'in_stock',
+    seasons: ['summer'],
+    packs: kgPacks,
+  },
+  {
+    slug: 'pomidory',
+    name: 'Помідори',
+    category: 'vegetables',
+    shortDescription: 'Стиглі помідори з городу.',
+    description:
+      'Помідори з наших теплиць і відкритого ґрунту. Сорти для салату й заготівель. Сезон — літо та рання осінь.',
+    images: ['/images/tomatoes.svg'],
+    pricePerKg: 40,
+    unit: 'kg',
+    availability: 'in_stock',
+    seasons: ['summer', 'autumn'],
+    featured: true,
+    packs: kgPacks,
+  },
+  {
+    slug: 'perets',
+    name: 'Перець',
+    category: 'vegetables',
+    shortDescription: 'Солодкий перець з грядок.',
+    description:
+      'Перець болгарський із городу в Милушах. Соковитий, підходить для фарширування й свіжих страв.',
+    images: ['/images/peppers.svg'],
+    pricePerKg: 50,
+    unit: 'kg',
+    availability: 'in_stock',
+    seasons: ['summer', 'autumn'],
+    featured: true,
+    packs: kgPacks,
+  },
+  {
+    slug: 'rozsada-pomidory',
+    name: 'Розсада помідорів',
+    category: 'seedlings',
+    shortDescription: 'Міцна розсада помідорів для висадки.',
+    description:
+      'Розсада помідорів власного вирощування. Готова до висадки навесні. Сорти й наявність уточнюємо під замовлення.',
+    images: ['/images/seedlings.svg'],
+    pricePerKg: 15,
+    unit: 'pcs',
+    availability: 'in_stock',
+    seasons: ['spring'],
+    featured: true,
+    packs: seedlingPacks,
+  },
+  {
+    slug: 'rozsada-perets',
+    name: 'Розсада перцю',
+    category: 'seedlings',
+    shortDescription: 'Розсада солодкого перцю.',
+    description:
+      'Розсада перцю для городу. Загартована, готова до висадки. Наявність — у весняний сезон.',
+    images: ['/images/seedlings.svg'],
+    pricePerKg: 12,
+    unit: 'pcs',
+    availability: 'in_stock',
+    seasons: ['spring'],
+    featured: true,
+    packs: seedlingPacks,
+  },
+  {
+    slug: 'rozsada-kabachky',
+    name: 'Розсада кабачків',
+    category: 'seedlings',
+    shortDescription: 'Розсада кабачків під попереднє замовлення.',
+    description:
+      'Розсаду кабачків вирощуємо під попереднє замовлення. Напишіть заздалегідь — підготуємо партію до потрібної дати.',
+    images: ['/images/seedlings.svg'],
+    pricePerKg: 10,
+    unit: 'pcs',
+    availability: 'limited',
+    preorder: true,
+    seasons: ['spring'],
+    packs: seedlingPacks,
+  },
+  {
+    slug: 'rozsada-ogirky',
+    name: 'Розсада огірків',
+    category: 'seedlings',
+    shortDescription: 'Розсада огірків під попереднє замовлення.',
+    description:
+      'Огіркову розсаду готуємо під попереднє замовлення. Узгоджуємо сорт і кількість до висадки.',
+    images: ['/images/seedlings.svg'],
+    pricePerKg: 10,
+    unit: 'pcs',
+    availability: 'limited',
+    preorder: true,
+    seasons: ['spring'],
+    packs: seedlingPacks,
+  },
+  {
+    slug: 'rozsada-baklazhany',
+    name: 'Розсада баклажанів',
+    category: 'seedlings',
+    shortDescription: 'Розсада баклажанів під попереднє замовлення.',
+    description:
+      'Баклажани вирощуємо на замовлення. Залиште запит навесні — підготуємо розсаду до висадки.',
+    images: ['/images/seedlings.svg'],
+    pricePerKg: 12,
+    unit: 'pcs',
+    availability: 'limited',
+    preorder: true,
+    seasons: ['spring'],
+    packs: seedlingPacks,
   },
   {
     slug: 'varennia-yabluchne',
@@ -144,6 +295,7 @@ export const products: Product[] = [
     pricePerKg: 95,
     unit: 'jar',
     availability: 'in_stock',
+    featured: true,
     packs: [{ id: 'jar05', label: 'Банка 0,5 л' }],
   },
   {
@@ -182,8 +334,30 @@ export function getProductBySlug(slug: string): Product | undefined {
   return products.find((p) => p.slug === slug)
 }
 
+export function isInCurrentSeason(product: Product, season: Season = currentSeason): boolean {
+  if (!product.seasons || product.seasons.length === 0) return true
+  return product.seasons.includes(season)
+}
+
+export function getEffectiveAvailability(
+  product: Product,
+  season: Season = currentSeason,
+): Availability {
+  if (!isInCurrentSeason(product, season)) return 'out_of_stock'
+  return product.availability
+}
+
+export function isAvailableNow(product: Product, season: Season = currentSeason): boolean {
+  const availability = getEffectiveAvailability(product, season)
+  return availability === 'in_stock' || availability === 'limited'
+}
+
+export function getProductsForCurrentSeason(season: Season = currentSeason): Product[] {
+  return products.filter((p) => isAvailableNow(p, season))
+}
+
 export function getFeaturedProducts(): Product[] {
-  return products.filter((p) => p.featured)
+  return products.filter((p) => p.featured && isAvailableNow(p))
 }
 
 export function getProductsByCategory(category: Product['category'] | 'all'): Product[] {
