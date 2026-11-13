@@ -1,14 +1,17 @@
 import { Link } from 'react-router-dom'
 import { site } from '../data/site'
+import { getSeasonTheme } from '../lib/season'
 
 export function Footer() {
+  const season = getSeasonTheme()
+
   return (
     <footer className="border-t border-[color-mix(in_srgb,var(--color-green)_16%,transparent)] bg-[color-mix(in_srgb,var(--color-green)_92%,#1e261c)] text-[var(--color-bg)]">
       <div className="container-page grid gap-8 py-12 md:grid-cols-[1.4fr_1fr_1fr]">
         <div>
           <p className="font-display text-2xl tracking-[0.04em]">{site.brand}</p>
           <p className="mt-2 max-w-sm text-[color-mix(in_srgb,var(--color-bg)_78%,transparent)]">
-            {site.tagline} · {site.location}
+            {season.tagline} · {site.location}
           </p>
         </div>
 

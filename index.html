@@ -27,6 +27,22 @@
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      ;(function () {
+        var m = new URLSearchParams(location.search).get('season')
+        var season =
+          m === 'spring' || m === 'summer' || m === 'autumn' || m === 'winter'
+            ? m
+            : (function () {
+                var month = new Date().getMonth() + 1
+                if (month >= 3 && month <= 5) return 'spring'
+                if (month >= 6 && month <= 8) return 'summer'
+                if (month >= 9 && month <= 11) return 'autumn'
+                return 'winter'
+              })()
+        document.documentElement.dataset.season = season
+      })()
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
