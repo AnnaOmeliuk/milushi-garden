@@ -2,13 +2,22 @@ import { Link } from 'react-router-dom'
 import { CategoryCard } from '../components/CategoryCard'
 import { ProductCard } from '../components/ProductCard'
 import { getFeaturedProducts } from '../data/products'
+import { getCurrentSeasonBlurb } from '../data/season'
 import { site } from '../data/site'
 import type { Category } from '../types/product'
 
-const CATEGORIES: Category[] = ['fruits', 'vegetables', 'berries', 'preserves', 'other']
+const CATEGORIES: Category[] = [
+  'fruits',
+  'vegetables',
+  'berries',
+  'seedlings',
+  'preserves',
+  'other',
+]
 
 export function Home() {
   const featured = getFeaturedProducts()
+  const seasonBlurb = getCurrentSeasonBlurb()
 
   return (
     <>
@@ -33,6 +42,9 @@ export function Home() {
           <p className="fade-up-delay-2 mt-4 max-w-md text-base text-[color-mix(in_srgb,var(--color-bg)_88%,transparent)] sm:text-lg">
             {site.shortPitch} {site.location}.
           </p>
+          <p className="fade-up-delay-2 mt-3 text-sm font-semibold tracking-[0.04em] text-[color-mix(in_srgb,var(--color-accent)_90%,white)]">
+            {seasonBlurb}
+          </p>
           <div className="fade-up-delay-2 mt-8 flex flex-wrap gap-3">
             <Link
               to="/catalog"
@@ -55,7 +67,9 @@ export function Home() {
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
               <h2 className="font-display text-3xl text-[var(--color-green)] sm:text-4xl">Наша продукція</h2>
-              <p className="mt-2 max-w-xl text-muted">Сезонні позиції, які зараз збираємо й фасуємо під замовлення.</p>
+              <p className="mt-2 max-w-xl text-muted">
+                {seasonBlurb}. Показуємо те, що зараз можна замовити.
+              </p>
             </div>
             <Link
               to="/catalog"
