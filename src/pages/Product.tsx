@@ -7,29 +7,26 @@ import {
   telegramOrderUrl,
   viberOrderUrl,
 } from '../lib/order'
-import { AVAILABILITY_LABELS, CATEGORY_LABELS, UNIT_LABELS } from '../types/product'
+import { AVAILABILITY_LABELS, CATEGORY_LABELS, QUALITY_LABELS } from '../types/product'
+import type { Quality } from '../types/product'
 
 export function Product() {
   const { slug = '' } = useParams()
   const product = getProductBySlug(slug)
 
   const [imageIndex, setImageIndex] = useState(0)
-  const [variantId, setVariantId] = useState('')
+  const [quality, setQuality] = useState<Quality>('selected')
   const [packId, setPackId] = useState('')
   const [quantity, setQuantity] = useState(1)
 
   useEffect(() => {
     if (!product) return
     setImageIndex(0)
-    setVariantId(product.variants?.[0]?.id ?? '')
+    setQuality('selected')
     setPackId(product.packs?.[0]?.id ?? '')
     setQuantity(1)
   }, [product])
 
-  const variant = useMemo(
-    () => product?.variants?.find((v) => v.id === variantId),
-    [product, variantId],
-  )
   const pack = useMemo(
     () => product?.packs?.find((p) => p.id === packId),
     [product, packId],
@@ -40,7 +37,7 @@ export function Product() {
   }
 
   const unavailable = product.availability === 'out_of_stock'
-  const message = buildOrderMessage({ product, quantity, pack, variant })
+  const message = buildOrderMessage({ product, quantity, pack, quality })
 
   return (
     <div className="section-pad">
@@ -94,10 +91,8 @@ export function Product() {
             <h1 className="mt-2 font-display text-4xl text-[var(--color-green)] sm:text-5xl">{product.name}</h1>
             <p className="mt-3 text-lg text-muted">{product.shortDescription}</p>
             <p className="mt-5 font-display text-3xl text-[var(--color-text)]">
-              {product.pricePerKg} грн
-              <span className="ml-1 text-base font-medium text-muted" style={{ fontFamily: 'var(--font-body)' }}>
-                / {UNIT_LABELS[product.unit]}
-              </span>
+              {quality === 'second' ? (product.secondGradePricePerKg === undefined ? 'Ціна уточнюється' : `${product.secondGradePricePerKg} грн`) : `${product.pricePerKg} грн`}
+              <span className="ml-1 text-base font-medium text-muted">/ кг</span>
             </p>
             <p
               className={`mt-2 text-sm font-semibold ${
@@ -112,35 +107,17 @@ export function Product() {
             </p>
 
             <div className="mt-6 space-y-6 border-t border-[color-mix(in_srgb,var(--color-green)_14%,transparent)] pt-6">
-              {product.variants && product.variants.length > 0 ? (
-                <fieldset>
-                  <legend className="text-sm font-semibold uppercase tracking-[0.1em] text-[var(--color-soft-green)]">
-                    Сорт
-                  </legend>
-                  <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                    {product.variants.map((item) => (
-                      <label
-                        key={item.id}
-                        className={`cursor-pointer rounded-md border px-3 py-3 transition ${
-                          variantId === item.id
-                            ? 'border-[var(--color-green)] bg-[color-mix(in_srgb,var(--color-soft-green)_22%,transparent)]'
-                            : 'border-[color-mix(in_srgb,var(--color-green)_16%,transparent)] hover:border-[var(--color-soft-green)]'
-                        }`}
-                      >
-                        <input
-                          type="radio"
-                          name="variant"
-                          className="sr-only"
-                          checked={variantId === item.id}
-                          onChange={() => setVariantId(item.id)}
-                        />
-                        <span className="block font-semibold">{item.name}</span>
-                        {item.note ? <span className="mt-0.5 block text-sm text-muted">{item.note}</span> : null}
-                      </label>
-                    ))}
-                  </div>
-                </fieldset>
-              ) : null}
+              <fieldset>
+                <legend className="text-sm font-semibold uppercase tracking-[0.1em] text-[var(--color-soft-green)]">Якість</legend>
+                <div className="mt-3 flex flex-wrap gap-3">
+                  {(['selected', 'second'] as const).map((item) => (
+                    <label key={item} className="flex cursor-pointer items-center gap-2 rounded-md border px-4 py-2">
+                      <input type="radio" name="quality" checked={quality === item} onChange={() => setQuality(item)} />
+                      {QUALITY_LABELS[item]}
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
 
               {product.packs && product.packs.length > 0 ? (
                 <fieldset>
@@ -173,7 +150,7 @@ export function Product() {
 
               <div>
                 <label htmlFor="qty" className="text-sm font-semibold uppercase tracking-[0.1em] text-[var(--color-soft-green)]">
-                  Кількість ({UNIT_LABELS[product.unit]})
+                  Кількість упаковок
                 </label>
                 <div className="mt-3 flex items-center gap-3">
                   <button
@@ -210,6 +187,7 @@ export function Product() {
                 </div>
               </div>
 
+              <p className="text-sm text-muted">Загальна вага: {(pack?.kg ?? 1) * quantity} кг. Кінцеву суму підтвердимо при замовленні.</p>
               {unavailable ? (
                 <p className="rounded-md bg-[color-mix(in_srgb,#8a4b3a_12%,transparent)] px-4 py-3 text-sm text-[#8a4b3a]">
                   Зараз немає в наявності. Загляньте пізніше в сезон або напишіть нам щодо наступного збору.
