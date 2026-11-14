@@ -101,16 +101,25 @@ export function Home() {
       </section>
 
       <section id="delivery" className="section-pad bg-[color-mix(in_srgb,var(--color-green)_8%,transparent)]">
-        <div className="container-page max-w-3xl">
+        <div className="container-page">
           <h2 className="font-display text-3xl text-[var(--color-green)] sm:text-4xl">{site.delivery.title}</h2>
-          <ul className="mt-6 space-y-4">
-            {site.delivery.items.map((item) => (
-              <li key={item} className="flex gap-3 text-[var(--color-text)]">
-                <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-accent)]" aria-hidden="true" />
-                <span>{item}</span>
-              </li>
+          <div className="mt-8 grid gap-5 md:grid-cols-3">
+            {[
+              { title: 'Самовивіз', icon: '🏡', details: [site.delivery.items[0]] },
+              { title: 'Доставка', icon: '🚚', details: [site.delivery.items[1], site.delivery.items[2]] },
+              { title: 'Оплата', icon: '💳', details: [site.delivery.items[3]] },
+            ].map((option) => (
+              <article key={option.title} className="rounded-2xl border border-[color-mix(in_srgb,var(--color-green)_14%,transparent)] bg-[var(--color-bg)] p-6 shadow-sm sm:p-7">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[color-mix(in_srgb,var(--color-green)_10%,transparent)] text-2xl" aria-hidden="true">
+                  {option.icon}
+                </div>
+                <h3 className="mt-5 font-display text-2xl text-[var(--color-green)]">{option.title}</h3>
+                <div className="mt-3 space-y-3 text-sm leading-relaxed text-[var(--color-text)] sm:text-base">
+                  {option.details.map((detail) => <p key={detail}>{detail}</p>)}
+                </div>
+              </article>
             ))}
-          </ul>
+          </div>
         </div>
       </section>
 
