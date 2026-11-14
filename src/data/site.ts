@@ -32,11 +32,10 @@ export const site = {
     ],
   },
   contacts: {
-    phone: '+380000000000',
-    phoneDisplay: '+38 (000) 000 00 00',
-    telegram: 'milushi_garden',
-    viber: '+380000000000',
-    email: 'hello@milushi.garden',
+    phone: '+380959017454',
+    phoneDisplay: '+38 (095) 901 74 54',
+    telegram: '+380509823434',
+    viber: '+380509823434',
     address: 'с. Милуші, Луцький район, Волинська область',
   },
   nav: [
