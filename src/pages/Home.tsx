@@ -75,7 +75,7 @@ export function Home() {
             <p className="mt-4 max-w-2xl text-lg text-[var(--color-text)]">{site.about.body}</p>
           </div>
           <div className="overflow-hidden rounded-2xl">
-            <img src="/images/apples-2.svg" alt="Сад Milushi Garden" className="h-full w-full object-cover" />
+            <img src="/images/products/orchard-about.webp" alt="Яблуневий сад Milushi Garden у Милушах" loading="lazy" className="h-full w-full object-cover" />
           </div>
         </div>
       </section>
