@@ -1,35 +1,33 @@
 import { site } from '../data/site'
-import type { PackOption, Product, Quality } from '../types/product'
+import type { Product, Quality } from '../types/product'
 import { QUALITY_LABELS } from '../types/product'
 
 export type OrderSelection = {
   product: Product
-  quantity: number // кількість упаковок
-  pack?: PackOption
+  weightKg: number
   quality: Quality
 }
 
-export function buildOrderMessage({ product, quantity, pack, quality }: OrderSelection): string {
-  const weight = (pack?.kg ?? 1) * quantity
+export function buildOrderMessage({ product, weightKg, quality }: OrderSelection): string {
   const price = quality === 'second' ? product.secondGradePricePerKg : product.pricePerKg
   const lines = [
     `Доброго дня! Хочу замовити з ${site.brand}:`,
     '',
     `Товар: ${product.name}`,
     `Якість: ${QUALITY_LABELS[quality]}`,
-    `Фасування: ${pack?.label ?? '1 кг'}`,
-    `Кількість упаковок: ${quantity}`,
-    `Загальна вага: ${weight} кг`,
+    `Бажана вага: ${weightKg} кг`,
     `Ціна за кг: ${price === undefined ? 'уточнюється' : `${price} грн`}`,
   ]
-  if (price !== undefined) lines.push(`Орієнтовна сума: ${weight * price} грн`)
-  lines.push('', 'Будь ласка, підтвердіть наявність і зручний час видачі.')
+  if (price !== undefined) lines.push(`Орієнтовна сума: ${Number((weightKg * price).toFixed(2))} грн`)
+  lines.push('', 'Будь ласка, підтвердіть наявність, остаточну суму та спосіб отримання.')
   return lines.join('\n')
 }
+
 export function viberOrderUrl(message: string): string {
   const number = site.contacts.viber.replace(/\D/g, '')
   return `viber://chat?number=%2B${number}&draft=${encodeURIComponent(message)}`
 }
+
 export function phoneOrderUrl(): string {
   return `tel:${site.contacts.phone}`
 }
