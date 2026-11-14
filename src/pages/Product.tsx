@@ -4,7 +4,6 @@ import { getProductBySlug } from '../data/products'
 import {
   buildOrderMessage,
   phoneOrderUrl,
-  telegramOrderUrl,
   viberOrderUrl,
 } from '../lib/order'
 import { AVAILABILITY_LABELS, CATEGORY_LABELS, QUALITY_LABELS } from '../types/product'
@@ -194,14 +193,6 @@ export function Product() {
                 </p>
               ) : (
                 <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-                  <a
-                    href={telegramOrderUrl(message)}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex flex-1 items-center justify-center rounded-md bg-[var(--color-green)] px-5 py-3 text-sm font-semibold text-[var(--color-bg)] transition hover:brightness-110"
-                  >
-                    Замовити в Telegram
-                  </a>
                   <a
                     href={viberOrderUrl(message)}
                     className="inline-flex flex-1 items-center justify-center rounded-md bg-[var(--color-leaf)] px-5 py-3 text-sm font-semibold text-[var(--color-bg)] transition hover:brightness-110"
