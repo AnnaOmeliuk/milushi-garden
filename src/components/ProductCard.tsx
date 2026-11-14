@@ -36,7 +36,7 @@ export function ProductCard({ product }: Props) {
         <p className="text-sm text-muted">{product.shortDescription}</p>
         <p
           className={`mt-auto pt-2 text-xs font-semibold uppercase tracking-[0.08em] ${
-            unavailable ? 'text-[#8a4b3a]' : product.availability === 'limited' ? 'text-[#8a6b2a]' : 'text-[var(--color-green)]'
+            unavailable ? 'text-[#895342]' : product.availability === 'limited' ? 'text-[#80612e]' : 'text-[var(--color-green)]'
           }`}
         >
           {AVAILABILITY_LABELS[product.availability]}
