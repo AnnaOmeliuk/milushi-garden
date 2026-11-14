@@ -10,8 +10,8 @@ export function Home() {
     <>
       <section className="relative min-h-[calc(100svh-var(--header-h))] overflow-hidden">
         <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: "url('/images/hero.svg')" }}
+          className="absolute inset-0 scale-x-[-1] bg-cover bg-center"
+          style={{ backgroundImage: "url('/images/products/orchard-about.webp')" }}
           aria-hidden="true"
         />
         <div
