@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { ProductCard } from '../components/ProductCard'
+import { ContactIcon } from '../components/ContactIcon'
 import { getFeaturedProducts } from '../data/products'
 import { site } from '../data/site'
 
@@ -132,7 +133,7 @@ export function Home() {
             </p>
             <dl className="mt-8 space-y-4">
               <div>
-                <dt className="text-sm font-semibold uppercase tracking-[0.1em] text-[var(--color-soft-green)]">Телефон</dt>
+                <dt className="flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.1em] text-[var(--color-soft-green)]"><ContactIcon name="phone" />Телефон</dt>
                 <dd className="mt-1 text-lg">
                   <a href={`tel:${site.contacts.phone}`} className="hover:text-[var(--color-green)]">
                     {site.contacts.phoneDisplay}
@@ -140,11 +141,11 @@ export function Home() {
                 </dd>
               </div>
               <div>
-                <dt className="text-sm font-semibold uppercase tracking-[0.1em] text-[var(--color-soft-green)]">Telegram</dt>
+                <dt className="flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.1em] text-[var(--color-soft-green)]"><ContactIcon name="telegram" />Telegram</dt>
                 <dd className="mt-1 text-lg">+380 50 982 34 34</dd>
               </div>
               <div>
-                <dt className="text-sm font-semibold uppercase tracking-[0.1em] text-[var(--color-soft-green)]">Viber</dt>
+                <dt className="flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.1em] text-[var(--color-soft-green)]"><ContactIcon name="viber" />Viber</dt>
                 <dd className="mt-1 text-lg">
                   <a href="viber://chat?number=%2B380509823434" className="hover:text-[var(--color-green)]">+380 50 982 34 34</a>
                 </dd>
@@ -158,7 +159,7 @@ export function Home() {
           <div className="rounded-2xl bg-[var(--color-green)] p-8 text-[var(--color-bg)]">
             <p className="font-display text-2xl">Готові замовити?</p>
             <p className="mt-3 text-[color-mix(in_srgb,var(--color-bg)_82%,transparent)]">
-              Оберіть товар у каталозі — кнопки Telegram і Viber підставлять текст замовлення автоматично.
+              Оберіть товар у каталозі — кнопка Viber допоможе сформувати повідомлення із замовленням.
             </p>
             <Link
               to="/catalog"
