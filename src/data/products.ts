@@ -10,6 +10,9 @@ const apples = [
   { slug: 'ligol', name: 'Ліголь', note: 'Червоні, солодкі та хрумкі' },
   { slug: 'idared', name: 'Айдаред', note: 'Яблука з нашого сімейного саду' },
   { slug: 'rubin', name: 'Рубін', note: 'Яблука з нашого сімейного саду' },
+  { slug: 'snizhnyi-kalvil', name: 'Сніжний кальвіль', note: 'Домашні яблука з нашого саду' },
+  { slug: 'bohemiia', name: 'Богемія', note: 'Домашні яблука з нашого саду' },
+  { slug: 'golden', name: 'Голден', note: 'Домашні яблука з нашого саду' },
 ] as const
 
 const applePacks = [
