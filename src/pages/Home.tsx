@@ -16,7 +16,7 @@ export function Home() {
           aria-hidden="true"
         />
         <div
-          className="absolute inset-0 bg-[linear-gradient(90deg,rgba(19,37,26,0.88)_0%,rgba(22,42,29,0.78)_34%,rgba(24,44,30,0.40)_68%,rgba(24,44,30,0.14)_100%)] max-sm:bg-[linear-gradient(0deg,rgba(19,37,26,0.94)_0%,rgba(19,37,26,0.76)_48%,rgba(19,37,26,0.24)_100%)]"
+          className="absolute inset-0 bg-[linear-gradient(90deg,rgba(24,43,30,0.88)_0%,rgba(24,43,30,0.76)_34%,rgba(24,43,30,0.38)_68%,rgba(24,43,30,0.12)_100%)] max-sm:bg-[linear-gradient(0deg,rgba(24,43,30,0.94)_0%,rgba(24,43,30,0.76)_48%,rgba(24,43,30,0.24)_100%)]"
           aria-hidden="true"
         />
 
@@ -133,7 +133,7 @@ export function Home() {
             </p>
             <dl className="mt-8 space-y-4">
               <div>
-                <dt className="flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.1em] text-[var(--color-soft-green)]"><ContactIcon name="phone" />Телефон</dt>
+                <dt className="flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.1em] text-[var(--color-green)]"><ContactIcon name="phone" />Телефон</dt>
                 <dd className="mt-1 text-lg">
                   <a href={`tel:${site.contacts.phone}`} className="hover:text-[var(--color-green)]">
                     {site.contacts.phoneDisplay}
