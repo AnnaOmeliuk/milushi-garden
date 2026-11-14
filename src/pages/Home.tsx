@@ -4,7 +4,7 @@ import { getFeaturedProducts } from '../data/products'
 import { site } from '../data/site'
 
 export function Home() {
-  const featured = getFeaturedProducts()
+  const featured = getFeaturedProducts().slice(0, 6)
 
   return (
     <>
