@@ -26,9 +26,6 @@ export function buildOrderMessage({ product, quantity, pack, quality }: OrderSel
   lines.push('', 'Будь ласка, підтвердіть наявність і зручний час видачі.')
   return lines.join('\n')
 }
-export function telegramOrderUrl(message: string): string {
-  return `https://t.me/${site.contacts.telegram}?text=${encodeURIComponent(message)}`
-}
 export function viberOrderUrl(message: string): string {
   const number = site.contacts.viber.replace(/\D/g, '')
   return `viber://chat?number=%2B${number}&draft=${encodeURIComponent(message)}`
