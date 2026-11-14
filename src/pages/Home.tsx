@@ -130,20 +130,13 @@ export function Home() {
               </div>
               <div>
                 <dt className="text-sm font-semibold uppercase tracking-[0.1em] text-[var(--color-soft-green)]">Telegram</dt>
-                <dd className="mt-1 text-lg">
-                  <a
-                    href={`https://t.me/${site.contacts.telegram}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="hover:text-[var(--color-green)]"
-                  >
-                    @{site.contacts.telegram}
-                  </a>
-                </dd>
+                <dd className="mt-1 text-lg">+380 50 982 34 34</dd>
               </div>
               <div>
                 <dt className="text-sm font-semibold uppercase tracking-[0.1em] text-[var(--color-soft-green)]">Viber</dt>
-                <dd className="mt-1 text-lg">{site.contacts.phoneDisplay}</dd>
+                <dd className="mt-1 text-lg">
+                  <a href="viber://chat?number=%2B380509823434" className="hover:text-[var(--color-green)]">+380 50 982 34 34</a>
+                </dd>
               </div>
               <div>
                 <dt className="text-sm font-semibold uppercase tracking-[0.1em] text-[var(--color-soft-green)]">Адреса</dt>
