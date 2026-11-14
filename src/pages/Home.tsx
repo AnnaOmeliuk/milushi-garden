@@ -1,11 +1,7 @@
 import { Link } from 'react-router-dom'
-import { CategoryCard } from '../components/CategoryCard'
 import { ProductCard } from '../components/ProductCard'
 import { getFeaturedProducts } from '../data/products'
 import { site } from '../data/site'
-import type { Category } from '../types/product'
-
-const CATEGORIES: Category[] = ['fruits', 'vegetables', 'berries', 'preserves', 'other']
 
 export function Home() {
   const featured = getFeaturedProducts()
@@ -55,7 +51,7 @@ export function Home() {
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
               <h2 className="font-display text-3xl text-[var(--color-green)] sm:text-4xl">Наша продукція</h2>
-              <p className="mt-2 max-w-xl text-muted">Сезонні позиції, які зараз збираємо й фасуємо під замовлення.</p>
+              <p className="mt-2 max-w-xl text-muted">Яблука різних сортів і домашні груші з нашого саду.</p>
             </div>
             <Link
               to="/catalog"
@@ -67,18 +63,6 @@ export function Home() {
           <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {featured.map((product) => (
               <ProductCard key={product.slug} product={product} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section id="categories" className="section-pad pt-0">
-        <div className="container-page">
-          <h2 className="font-display text-3xl text-[var(--color-green)] sm:text-4xl">Категорії</h2>
-          <p className="mt-2 max-w-xl text-muted">Оберіть напрям — відкриємо відфільтрований каталог.</p>
-          <div className="mt-6">
-            {CATEGORIES.map((category) => (
-              <CategoryCard key={category} category={category} />
             ))}
           </div>
         </div>
