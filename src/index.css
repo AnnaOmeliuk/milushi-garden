@@ -1,13 +1,13 @@
 @import 'tailwindcss';
 
 :root {
-  --color-bg: #f8f6ef;
-  --color-green: #536b4f;
-  --color-soft-green: #a7b596;
-  --color-accent: #e5b95c;
-  --color-text: #30352d;
-  --color-cream: #f1eee4;
-  --color-leaf: #3f5340;
+  --color-bg: #faf8f2;
+  --color-green: #425a42;
+  --color-soft-green: #899b7d;
+  --color-accent: #e7bd73;
+  --color-text: #303a30;
+  --color-cream: #f2efe5;
+  --color-leaf: #344a37;
   --font-display: 'Fraunces', 'Georgia', serif;
   --font-body: 'Source Sans 3', 'Segoe UI', sans-serif;
   --header-h: 4.25rem;
@@ -30,8 +30,8 @@
     font-family: var(--font-body);
     color: var(--color-text);
     background:
-      radial-gradient(ellipse 80% 50% at 10% -10%, rgba(167, 181, 150, 0.28), transparent 55%),
-      radial-gradient(ellipse 70% 45% at 100% 0%, rgba(229, 185, 92, 0.18), transparent 50%),
+      radial-gradient(ellipse 80% 50% at 10% -10%, rgba(137, 155, 125, 0.16), transparent 55%),
+      radial-gradient(ellipse 70% 45% at 100% 0%, rgba(231, 189, 115, 0.10), transparent 50%),
       linear-gradient(180deg, var(--color-bg) 0%, var(--color-cream) 100%);
     background-attachment: fixed;
     line-height: 1.55;
