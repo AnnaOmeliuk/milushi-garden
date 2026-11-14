@@ -4,7 +4,7 @@ import { ContactIcon } from './ContactIcon'
 
 export function Footer() {
   return (
-    <footer className="border-t border-[color-mix(in_srgb,var(--color-green)_16%,transparent)] bg-[color-mix(in_srgb,var(--color-green)_92%,#1e261c)] text-[var(--color-bg)]">
+    <footer className="border-t border-[color-mix(in_srgb,var(--color-green)_16%,transparent)] bg-[color-mix(in_srgb,var(--color-green)_92%,#243428)] text-[var(--color-bg)]">
       <div className="container-page grid gap-8 py-12 md:grid-cols-[1.4fr_1fr_1fr]">
         <div>
           <p className="font-display text-2xl tracking-[0.04em]">{site.brand}</p>
