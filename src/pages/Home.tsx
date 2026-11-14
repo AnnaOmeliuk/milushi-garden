@@ -1,36 +1,34 @@
 import { Link } from 'react-router-dom'
-import { CategoryCard } from '../components/CategoryCard'
 import { ProductCard } from '../components/ProductCard'
+import { ContactIcon } from '../components/ContactIcon'
 import { getFeaturedProducts } from '../data/products'
 import { site } from '../data/site'
-import type { Category } from '../types/product'
-
-const CATEGORIES: Category[] = ['fruits', 'vegetables', 'berries', 'preserves', 'other']
 
 export function Home() {
-  const featured = getFeaturedProducts()
+  const featured = getFeaturedProducts().slice(0, 6)
 
   return (
     <>
       <section className="relative min-h-[calc(100svh-var(--header-h))] overflow-hidden">
         <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: "url('/images/hero.svg')" }}
+          className="absolute inset-0 scale-x-[-1] bg-cover bg-center"
+          style={{ backgroundImage: "url('/images/products/orchard-about.webp')" }}
           aria-hidden="true"
         />
         <div
-          className="absolute inset-0 bg-[linear-gradient(105deg,rgba(48,53,45,0.78)_0%,rgba(63,83,64,0.55)_48%,rgba(48,53,45,0.25)_100%)]"
+          className="absolute inset-0 bg-[linear-gradient(90deg,rgba(24,43,30,0.88)_0%,rgba(24,43,30,0.76)_34%,rgba(24,43,30,0.38)_68%,rgba(24,43,30,0.12)_100%)] max-sm:bg-[linear-gradient(0deg,rgba(24,43,30,0.94)_0%,rgba(24,43,30,0.76)_48%,rgba(24,43,30,0.24)_100%)]"
           aria-hidden="true"
         />
 
-        <div className="container-page relative flex min-h-[calc(100svh-var(--header-h))] flex-col justify-end pb-16 pt-20 sm:justify-center sm:pb-24">
-          <p className="fade-up font-display text-[clamp(2.6rem,8vw,5.4rem)] leading-[0.95] tracking-[0.02em] text-[var(--color-bg)]">
+        <div className="container-page relative flex min-h-[calc(100svh-var(--header-h))] flex-col justify-end pb-14 pt-24 sm:justify-center sm:pb-20">
+          <div className="max-w-[min(100%,38rem)]" style={{ textShadow: "0 2px 18px rgba(0,0,0,0.32)" }}>
+          <p className="fade-up font-display text-[clamp(2.6rem,8vw,5.4rem)] leading-[1.05] tracking-[0.02em] text-[var(--color-bg)]">
             {site.brand}
           </p>
-          <h1 className="fade-up-delay mt-4 max-w-xl font-display text-[clamp(1.55rem,3.6vw,2.35rem)] font-medium text-[var(--color-accent)]">
+          <h1 className="fade-up-delay mt-5 max-w-xl font-display text-[clamp(1.55rem,3.6vw,2.35rem)] font-medium leading-tight text-[var(--color-accent)]">
             {site.tagline}
           </h1>
-          <p className="fade-up-delay-2 mt-4 max-w-md text-base text-[color-mix(in_srgb,var(--color-bg)_88%,transparent)] sm:text-lg">
+          <p className="fade-up-delay-2 mt-5 max-w-md text-base leading-relaxed text-[var(--color-bg)] sm:text-lg">
             {site.shortPitch} {site.location}.
           </p>
           <div className="fade-up-delay-2 mt-8 flex flex-wrap gap-3">
@@ -47,6 +45,7 @@ export function Home() {
               Зв’язатись
             </a>
           </div>
+          </div>
         </div>
       </section>
 
@@ -55,7 +54,7 @@ export function Home() {
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
               <h2 className="font-display text-3xl text-[var(--color-green)] sm:text-4xl">Наша продукція</h2>
-              <p className="mt-2 max-w-xl text-muted">Сезонні позиції, які зараз збираємо й фасуємо під замовлення.</p>
+              <p className="mt-2 max-w-xl text-muted">Яблука різних сортів і домашні груші з нашого саду.</p>
             </div>
             <Link
               to="/catalog"
@@ -72,18 +71,6 @@ export function Home() {
         </div>
       </section>
 
-      <section id="categories" className="section-pad pt-0">
-        <div className="container-page">
-          <h2 className="font-display text-3xl text-[var(--color-green)] sm:text-4xl">Категорії</h2>
-          <p className="mt-2 max-w-xl text-muted">Оберіть напрям — відкриємо відфільтрований каталог.</p>
-          <div className="mt-6">
-            {CATEGORIES.map((category) => (
-              <CategoryCard key={category} category={category} />
-            ))}
-          </div>
-        </div>
-      </section>
-
       <section id="about" className="section-pad bg-[color-mix(in_srgb,var(--color-soft-green)_18%,transparent)]">
         <div className="container-page grid gap-10 md:grid-cols-[1.1fr_0.9fr] md:items-center">
           <div>
@@ -91,7 +78,7 @@ export function Home() {
             <p className="mt-4 max-w-2xl text-lg text-[var(--color-text)]">{site.about.body}</p>
           </div>
           <div className="overflow-hidden rounded-2xl">
-            <img src="/images/apples-2.svg" alt="Сад Milushi Garden" className="h-full w-full object-cover" />
+            <img src="/images/products/orchard-about.webp" alt="Яблуневий сад Milushi Garden у Милушах" loading="lazy" className="h-full w-full object-cover" />
           </div>
         </div>
       </section>
@@ -115,16 +102,25 @@ export function Home() {
       </section>
 
       <section id="delivery" className="section-pad bg-[color-mix(in_srgb,var(--color-green)_8%,transparent)]">
-        <div className="container-page max-w-3xl">
+        <div className="container-page">
           <h2 className="font-display text-3xl text-[var(--color-green)] sm:text-4xl">{site.delivery.title}</h2>
-          <ul className="mt-6 space-y-4">
-            {site.delivery.items.map((item) => (
-              <li key={item} className="flex gap-3 text-[var(--color-text)]">
-                <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-accent)]" aria-hidden="true" />
-                <span>{item}</span>
-              </li>
+          <div className="mt-8 grid gap-5 md:grid-cols-3">
+            {[
+              { title: 'Самовивіз', icon: '🏡', details: [site.delivery.items[0]] },
+              { title: 'Доставка', icon: '🚚', details: [site.delivery.items[1], site.delivery.items[2]] },
+              { title: 'Оплата', icon: '💳', details: [site.delivery.items[3]] },
+            ].map((option) => (
+              <article key={option.title} className="rounded-2xl border border-[color-mix(in_srgb,var(--color-green)_14%,transparent)] bg-[var(--color-bg)] p-6 shadow-sm sm:p-7">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[color-mix(in_srgb,var(--color-green)_10%,transparent)] text-2xl" aria-hidden="true">
+                  {option.icon}
+                </div>
+                <h3 className="mt-5 font-display text-2xl text-[var(--color-green)]">{option.title}</h3>
+                <div className="mt-3 space-y-3 text-sm leading-relaxed text-[var(--color-text)] sm:text-base">
+                  {option.details.map((detail) => <p key={detail}>{detail}</p>)}
+                </div>
+              </article>
             ))}
-          </ul>
+          </div>
         </div>
       </section>
 
@@ -137,7 +133,7 @@ export function Home() {
             </p>
             <dl className="mt-8 space-y-4">
               <div>
-                <dt className="text-sm font-semibold uppercase tracking-[0.1em] text-[var(--color-soft-green)]">Телефон</dt>
+                <dt className="flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.1em] text-[var(--color-green)]"><ContactIcon name="phone" />Телефон</dt>
                 <dd className="mt-1 text-lg">
                   <a href={`tel:${site.contacts.phone}`} className="hover:text-[var(--color-green)]">
                     {site.contacts.phoneDisplay}
@@ -145,32 +141,25 @@ export function Home() {
                 </dd>
               </div>
               <div>
-                <dt className="text-sm font-semibold uppercase tracking-[0.1em] text-[var(--color-soft-green)]">Telegram</dt>
+                <dt className="flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.1em] text-[var(--color-soft-green)]"><ContactIcon name="telegram" />Telegram</dt>
+                <dd className="mt-1 text-lg">+380 50 982 34 34</dd>
+              </div>
+              <div>
+                <dt className="flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.1em] text-[var(--color-soft-green)]"><ContactIcon name="viber" />Viber</dt>
                 <dd className="mt-1 text-lg">
-                  <a
-                    href={`https://t.me/${site.contacts.telegram}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="hover:text-[var(--color-green)]"
-                  >
-                    @{site.contacts.telegram}
-                  </a>
+                  <a href="viber://chat?number=%2B380509823434" className="hover:text-[var(--color-green)]">+380 50 982 34 34</a>
                 </dd>
               </div>
               <div>
-                <dt className="text-sm font-semibold uppercase tracking-[0.1em] text-[var(--color-soft-green)]">Viber</dt>
-                <dd className="mt-1 text-lg">{site.contacts.phoneDisplay}</dd>
-              </div>
-              <div>
                 <dt className="text-sm font-semibold uppercase tracking-[0.1em] text-[var(--color-soft-green)]">Адреса</dt>
-                <dd className="mt-1 text-lg">{site.contacts.address}</dd>
+                <dd className="mt-1 text-lg"><a href="https://www.google.com/maps/search/?api=1&query=%D1%81%D0%B5%D0%BB%D0%BE%20%D0%9C%D0%B8%D0%BB%D1%83%D1%88%D1%96%2C%20%D0%9B%D1%83%D1%86%D1%8C%D0%BA%D0%B8%D0%B9%20%D1%80%D0%B0%D0%B9%D0%BE%D0%BD%2C%20%D0%92%D0%BE%D0%BB%D0%B8%D0%BD%D1%81%D1%8C%D0%BA%D0%B0%20%D0%BE%D0%B1%D0%BB%D0%B0%D1%81%D1%82%D1%8C%2C%20%D0%A3%D0%BA%D1%80%D0%B0%D1%97%D0%BD%D0%B0" target="_blank" rel="noopener noreferrer" className="underline-offset-4 hover:underline hover:text-[var(--color-green)]" aria-label="Показати село Милуші на Google Maps">{site.contacts.address}</a></dd>
               </div>
             </dl>
           </div>
           <div className="rounded-2xl bg-[var(--color-green)] p-8 text-[var(--color-bg)]">
             <p className="font-display text-2xl">Готові замовити?</p>
             <p className="mt-3 text-[color-mix(in_srgb,var(--color-bg)_82%,transparent)]">
-              Оберіть товар у каталозі — кнопки Telegram і Viber підставлять текст замовлення автоматично.
+              Оберіть товар у каталозі — кнопка Viber допоможе сформувати повідомлення із замовленням.
             </p>
             <Link
               to="/catalog"
