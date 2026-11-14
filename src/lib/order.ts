@@ -1,53 +1,38 @@
 import { site } from '../data/site'
-import type { PackOption, Product, ProductVariant } from '../types/product'
-import { UNIT_LABELS } from '../types/product'
+import type { PackOption, Product, Quality } from '../types/product'
+import { QUALITY_LABELS } from '../types/product'
 
 export type OrderSelection = {
   product: Product
-  quantity: number
+  quantity: number // кількість упаковок
   pack?: PackOption
-  variant?: ProductVariant
+  quality: Quality
 }
 
-export function buildOrderMessage({
-  product,
-  quantity,
-  pack,
-  variant,
-}: OrderSelection): string {
+export function buildOrderMessage({ product, quantity, pack, quality }: OrderSelection): string {
+  const weight = (pack?.kg ?? 1) * quantity
+  const price = quality === 'second' ? product.secondGradePricePerKg : product.pricePerKg
   const lines = [
     `Доброго дня! Хочу замовити з ${site.brand}:`,
     '',
     `Товар: ${product.name}`,
+    `Якість: ${QUALITY_LABELS[quality]}`,
+    `Фасування: ${pack?.label ?? '1 кг'}`,
+    `Кількість упаковок: ${quantity}`,
+    `Загальна вага: ${weight} кг`,
+    `Ціна за кг: ${price === undefined ? 'уточнюється' : `${price} грн`}`,
   ]
-
-  if (variant) {
-    lines.push(`Сорт / варіант: ${variant.name}`)
-  }
-
-  if (pack) {
-    lines.push(`Фасування: ${pack.label}`)
-  }
-
-  lines.push(`Кількість: ${quantity} ${UNIT_LABELS[product.unit]}`)
-  lines.push(`Ціна орієнтовно: ${product.pricePerKg} грн / ${UNIT_LABELS[product.unit]}`)
-  lines.push('')
-  lines.push('Будь ласка, підтвердіть наявність і зручний час видачі.')
-
+  if (price !== undefined) lines.push(`Орієнтовна сума: ${weight * price} грн`)
+  lines.push('', 'Будь ласка, підтвердіть наявність і зручний час видачі.')
   return lines.join('\n')
 }
-
 export function telegramOrderUrl(message: string): string {
-  const text = encodeURIComponent(message)
-  return `https://t.me/${site.contacts.telegram}?text=${text}`
+  return `https://t.me/${site.contacts.telegram}?text=${encodeURIComponent(message)}`
 }
-
 export function viberOrderUrl(message: string): string {
   const number = site.contacts.viber.replace(/\D/g, '')
-  const text = encodeURIComponent(message)
-  return `viber://chat?number=%2B${number}&draft=${text}`
+  return `viber://chat?number=%2B${number}&draft=${encodeURIComponent(message)}`
 }
-
 export function phoneOrderUrl(): string {
   return `tel:${site.contacts.phone}`
 }
