@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { getProductBySlug } from '../data/products'
 import {
@@ -15,28 +15,25 @@ export function Product() {
 
   const [imageIndex, setImageIndex] = useState(0)
   const [quality, setQuality] = useState<Quality>('selected')
-  const [packId, setPackId] = useState('')
-  const [quantity, setQuantity] = useState(1)
+  const [weight, setWeight] = useState('5')
 
   useEffect(() => {
     if (!product) return
     setImageIndex(0)
     setQuality('selected')
-    setPackId(product.packs?.[0]?.id ?? '')
-    setQuantity(1)
+    setWeight('5')
   }, [product])
-
-  const pack = useMemo(
-    () => product?.packs?.find((p) => p.id === packId),
-    [product, packId],
-  )
 
   if (!product) {
     return <Navigate to="/catalog" replace />
   }
 
   const unavailable = product.availability === 'out_of_stock'
-  const message = buildOrderMessage({ product, quantity, pack, quality })
+  const weightKg = Number(weight)
+  const validWeight = weight.trim() !== '' && Number.isFinite(weightKg) && weightKg > 0 && weightKg <= 999
+  const pricePerKg = quality === 'second' ? product.secondGradePricePerKg : product.pricePerKg
+  const total = validWeight && pricePerKg !== undefined ? Number((weightKg * pricePerKg).toFixed(2)) : undefined
+  const message = validWeight ? buildOrderMessage({ product, weightKg, quality }) : ''
 
   return (
     <div className="section-pad">
@@ -63,13 +60,13 @@ export function Product() {
               />
             </div>
             {product.images.length > 1 ? (
-              <div className="mt-3 flex gap-3">
+              <div className="mt-3 flex gap-3 overflow-x-auto pb-2">
                 {product.images.map((src, index) => (
                   <button
                     key={src}
                     type="button"
                     onClick={() => setImageIndex(index)}
-                    className={`overflow-hidden rounded-lg border-2 ${
+                    className={`shrink-0 overflow-hidden rounded-lg border-2 ${
                       index === imageIndex
                         ? 'border-[var(--color-green)]'
                         : 'border-transparent opacity-80 hover:opacity-100'
@@ -118,75 +115,35 @@ export function Product() {
                 </div>
               </fieldset>
 
-              {product.packs && product.packs.length > 0 ? (
-                <fieldset>
-                  <legend className="text-sm font-semibold uppercase tracking-[0.1em] text-[var(--color-soft-green)]">
-                    Фасування
-                  </legend>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {product.packs.map((item) => (
-                      <label
-                        key={item.id}
-                        className={`cursor-pointer rounded-md border px-3 py-2 text-sm font-semibold transition ${
-                          packId === item.id
-                            ? 'border-[var(--color-green)] bg-[var(--color-green)] text-[var(--color-bg)]'
-                            : 'border-[color-mix(in_srgb,var(--color-green)_16%,transparent)] hover:border-[var(--color-soft-green)]'
-                        }`}
-                      >
-                        <input
-                          type="radio"
-                          name="pack"
-                          className="sr-only"
-                          checked={packId === item.id}
-                          onChange={() => setPackId(item.id)}
-                        />
-                        {item.label}
-                      </label>
-                    ))}
-                  </div>
-                </fieldset>
-              ) : null}
-
               <div>
-                <label htmlFor="qty" className="text-sm font-semibold uppercase tracking-[0.1em] text-[var(--color-soft-green)]">
-                  Кількість упаковок
+                <label htmlFor="weight" className="text-sm font-semibold uppercase tracking-[0.1em] text-[var(--color-green)]">
+                  Бажана кількість (кг)
                 </label>
-                <div className="mt-3 flex items-center gap-3">
-                  <button
-                    type="button"
-                    className="h-10 w-10 rounded-md border border-[color-mix(in_srgb,var(--color-green)_20%,transparent)] font-semibold disabled:opacity-40"
-                    onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                    disabled={unavailable || quantity <= 1}
-                    aria-label="Зменшити кількість"
-                  >
-                    −
-                  </button>
-                  <input
-                    id="qty"
-                    type="number"
-                    min={1}
-                    max={999}
-                    value={quantity}
-                    disabled={unavailable}
-                    onChange={(e) => {
-                      const next = Number(e.target.value)
-                      if (Number.isFinite(next)) setQuantity(Math.min(999, Math.max(1, next)))
-                    }}
-                    className="h-10 w-20 rounded-md border border-[color-mix(in_srgb,var(--color-green)_20%,transparent)] bg-transparent text-center font-semibold disabled:opacity-50"
-                  />
-                  <button
-                    type="button"
-                    className="h-10 w-10 rounded-md border border-[color-mix(in_srgb,var(--color-green)_20%,transparent)] font-semibold disabled:opacity-40"
-                    onClick={() => setQuantity((q) => Math.min(999, q + 1))}
-                    disabled={unavailable}
-                    aria-label="Збільшити кількість"
-                  >
-                    +
-                  </button>
-                </div>
+                <input
+                  id="weight"
+                  type="number"
+                  inputMode="decimal"
+                  min="0.1"
+                  max="999"
+                  step="0.1"
+                  value={weight}
+                  disabled={unavailable}
+                  onChange={(event) => setWeight(event.target.value)}
+                  aria-invalid={!validWeight}
+                  aria-describedby="weight-hint"
+                  className="mt-3 block w-36 rounded-md border border-[color-mix(in_srgb,var(--color-green)_25%,transparent)] bg-[var(--color-bg)] px-3 py-2.5 text-lg font-semibold text-[var(--color-text)] disabled:opacity-50"
+                />
+                <p id="weight-hint" className="mt-2 text-sm text-muted">
+                  {validWeight ? 'Фасування узгодимо під час замовлення.' : 'Введіть вагу більше 0 і не більше 999 кг.'}
+                </p>
               </div>
-
-              <p className="text-sm text-muted">Загальна вага: {(pack?.kg ?? 1) * quantity} кг. Кінцеву суму підтвердимо при замовленні.</p>
+              <div className="rounded-xl bg-[var(--color-cream)] p-5">
+                <p className="text-sm font-medium text-muted">Орієнтовна вартість</p>
+                <p className="mt-1 font-display text-3xl text-[var(--color-green)]">
+                  {!validWeight ? 'Вкажіть вагу' : total === undefined ? 'Ціна уточнюється' : total.toLocaleString('uk-UA') + ' грн'}
+                </p>
+                <p className="mt-2 text-sm text-muted">Наявність, остаточну вагу та суму підтвердимо під час замовлення.</p>
+              </div>
               {unavailable ? (
                 <p className="rounded-md bg-[color-mix(in_srgb,#895342_12%,transparent)] px-4 py-3 text-sm text-[#895342]">
                   Зараз немає в наявності. Загляньте пізніше в сезон або напишіть нам щодо наступного збору.
@@ -194,8 +151,10 @@ export function Product() {
               ) : (
                 <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                   <a
-                    href={viberOrderUrl(message)}
-                    className="inline-flex flex-1 items-center justify-center rounded-md bg-[var(--color-leaf)] px-5 py-3 text-sm font-semibold text-[var(--color-bg)] transition hover:brightness-110"
+                    href={validWeight ? viberOrderUrl(message) : undefined}
+                    aria-disabled={!validWeight}
+                    tabIndex={validWeight ? undefined : -1}
+                    className="inline-flex flex-1 items-center justify-center rounded-md bg-[var(--color-leaf)] px-5 py-3 text-sm font-semibold text-[var(--color-bg)] transition hover:brightness-110 disabled:opacity-50"
                   >
                     Замовити у Viber
                   </a>
