@@ -15,18 +15,19 @@ export function Home() {
           aria-hidden="true"
         />
         <div
-          className="absolute inset-0 bg-[linear-gradient(105deg,rgba(48,53,45,0.78)_0%,rgba(63,83,64,0.55)_48%,rgba(48,53,45,0.25)_100%)]"
+          className="absolute inset-0 bg-[linear-gradient(90deg,rgba(19,37,26,0.88)_0%,rgba(22,42,29,0.78)_34%,rgba(24,44,30,0.40)_68%,rgba(24,44,30,0.14)_100%)] max-sm:bg-[linear-gradient(0deg,rgba(19,37,26,0.94)_0%,rgba(19,37,26,0.76)_48%,rgba(19,37,26,0.24)_100%)]"
           aria-hidden="true"
         />
 
-        <div className="container-page relative flex min-h-[calc(100svh-var(--header-h))] flex-col justify-end pb-16 pt-20 sm:justify-center sm:pb-24">
-          <p className="fade-up font-display text-[clamp(2.6rem,8vw,5.4rem)] leading-[0.95] tracking-[0.02em] text-[var(--color-bg)]">
+        <div className="container-page relative flex min-h-[calc(100svh-var(--header-h))] flex-col justify-end pb-14 pt-24 sm:justify-center sm:pb-20">
+          <div className="max-w-[min(100%,38rem)]" style={{ textShadow: "0 2px 18px rgba(0,0,0,0.32)" }}>
+          <p className="fade-up font-display text-[clamp(2.6rem,8vw,5.4rem)] leading-[1.05] tracking-[0.02em] text-[var(--color-bg)]">
             {site.brand}
           </p>
-          <h1 className="fade-up-delay mt-4 max-w-xl font-display text-[clamp(1.55rem,3.6vw,2.35rem)] font-medium text-[var(--color-accent)]">
+          <h1 className="fade-up-delay mt-5 max-w-xl font-display text-[clamp(1.55rem,3.6vw,2.35rem)] font-medium leading-tight text-[var(--color-accent)]">
             {site.tagline}
           </h1>
-          <p className="fade-up-delay-2 mt-4 max-w-md text-base text-[color-mix(in_srgb,var(--color-bg)_88%,transparent)] sm:text-lg">
+          <p className="fade-up-delay-2 mt-5 max-w-md text-base leading-relaxed text-[var(--color-bg)] sm:text-lg">
             {site.shortPitch} {site.location}.
           </p>
           <div className="fade-up-delay-2 mt-8 flex flex-wrap gap-3">
@@ -42,6 +43,7 @@ export function Home() {
             >
               Зв’язатись
             </a>
+          </div>
           </div>
         </div>
       </section>
