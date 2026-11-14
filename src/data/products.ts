@@ -46,7 +46,7 @@ export const products: Product[] = [
     secondGradePricePerKg: 20,
     unit: 'kg',
     availability: 'in_stock',
-    featured: index < 3,
+    featured: index < 6,
     packs: applePacks,
   })),
   {
