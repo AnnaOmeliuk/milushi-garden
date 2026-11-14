@@ -32,8 +32,8 @@ export const site = {
     ],
   },
   contacts: {
-    phone: '+380959017454',
-    phoneDisplay: '+38 (095) 901 74 54',
+    phone: '+380509823434',
+    phoneDisplay: '+380 50 982 34 34',
     telegram: '+380509823434',
     viber: '+380509823434',
     address: 'с. Милуші, Луцький район, Волинська область',
