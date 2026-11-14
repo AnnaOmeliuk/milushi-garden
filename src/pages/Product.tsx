@@ -88,7 +88,7 @@ export function Product() {
             <p className="mt-3 text-lg text-muted">{product.shortDescription}</p>
             <p className="mt-5 font-display text-3xl text-[var(--color-text)]">
               {quality === 'second' ? (product.secondGradePricePerKg === undefined ? 'Ціна уточнюється' : `${product.secondGradePricePerKg} грн`) : `${product.pricePerKg} грн`}
-              <span className="ml-1 text-base font-medium text-muted">/ кг</span>
+              {(quality !== "second" || product.secondGradePricePerKg !== undefined) && <span className="ml-1 text-base font-medium text-muted">/ кг</span>}
             </p>
             <p
               className={`mt-2 text-sm font-semibold ${
@@ -154,7 +154,7 @@ export function Product() {
                     href={validWeight ? viberOrderUrl(message) : undefined}
                     aria-disabled={!validWeight}
                     tabIndex={validWeight ? undefined : -1}
-                    className="inline-flex flex-1 items-center justify-center rounded-md bg-[var(--color-leaf)] px-5 py-3 text-sm font-semibold text-[var(--color-bg)] transition hover:brightness-110 disabled:opacity-50"
+                    className={`inline-flex flex-1 items-center justify-center rounded-md bg-[var(--color-leaf)] px-5 py-3 text-sm font-semibold text-[var(--color-bg)] transition hover:brightness-110 ${validWeight ? "" : "pointer-events-none opacity-50"}`}
                   >
                     Замовити у Viber
                   </a>
