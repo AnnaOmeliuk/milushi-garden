@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { site } from '../data/site'
+import { ContactIcon } from './ContactIcon'
 
 export function Footer() {
   return (
@@ -42,18 +43,19 @@ export function Footer() {
           <p className="text-sm font-semibold uppercase tracking-[0.12em] text-[var(--color-accent)]">Зв’язок</p>
           <ul className="mt-3 space-y-2 text-[color-mix(in_srgb,var(--color-bg)_86%,transparent)]">
             <li>
-              <a href={`tel:${site.contacts.phone}`} className="hover:text-white">
+              <a href={`tel:${site.contacts.phone}`} className="inline-flex items-center gap-2 hover:text-white">
+                <ContactIcon name="phone" />
                 {site.contacts.phoneDisplay}
               </a>
             </li>
+            <li className="flex items-center gap-2">
+              <ContactIcon name="telegram" />
+              <span>Telegram: {site.contacts.phoneDisplay}</span>
+            </li>
             <li>
-              <a
-                href={`https://t.me/${site.contacts.telegram}`}
-                target="_blank"
-                rel="noreferrer"
-                className="hover:text-white"
-              >
-                Telegram @{site.contacts.telegram}
+              <a href={`viber://chat?number=%2B380509823434`} className="inline-flex items-center gap-2 hover:text-white">
+                <ContactIcon name="viber" />
+                <span>Viber: {site.contacts.phoneDisplay}</span>
               </a>
             </li>
             <li>{site.contacts.address}</li>
