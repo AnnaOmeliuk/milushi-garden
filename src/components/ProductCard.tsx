@@ -30,7 +30,7 @@ export function ProductCard({ product }: Props) {
         <div className="flex items-start justify-between gap-3">
           <h3 className="font-display text-xl text-[var(--color-text)]">{product.name}</h3>
           <p className="shrink-0 text-sm font-semibold text-[var(--color-green)]">
-            {product.pricePerKg} грн/{UNIT_LABELS[product.unit]}
+            від {product.pricePerKg} грн/{UNIT_LABELS[product.unit]}
           </p>
         </div>
         <p className="text-sm text-muted">{product.shortDescription}</p>
