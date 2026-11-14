@@ -96,9 +96,9 @@ export function Product() {
             <p
               className={`mt-2 text-sm font-semibold ${
                 unavailable
-                  ? 'text-[#8a4b3a]'
+                  ? 'text-[#895342]'
                   : product.availability === 'limited'
-                    ? 'text-[#8a6b2a]'
+                    ? 'text-[#80612e]'
                     : 'text-[var(--color-green)]'
               }`}
             >
@@ -188,7 +188,7 @@ export function Product() {
 
               <p className="text-sm text-muted">Загальна вага: {(pack?.kg ?? 1) * quantity} кг. Кінцеву суму підтвердимо при замовленні.</p>
               {unavailable ? (
-                <p className="rounded-md bg-[color-mix(in_srgb,#8a4b3a_12%,transparent)] px-4 py-3 text-sm text-[#8a4b3a]">
+                <p className="rounded-md bg-[color-mix(in_srgb,#895342_12%,transparent)] px-4 py-3 text-sm text-[#895342]">
                   Зараз немає в наявності. Загляньте пізніше в сезон або напишіть нам щодо наступного збору.
                 </p>
               ) : (
