@@ -21,7 +21,7 @@ export function Product() {
     if (!product) return
     setImageIndex(0)
     setQuality('selected')
-    setWeight('5')
+    setWeight(product.unit === 'kg' ? '5' : '1')
   }, [product])
 
   if (!product) {
@@ -33,9 +33,9 @@ export function Product() {
   const isPreorder = !unavailable && Boolean(product.preorder)
   const weightKg = Number(weight)
   const validWeight = weight.trim() !== '' && Number.isFinite(weightKg) && weightKg > 0 && weightKg <= 999 && (product.unit === 'kg' || Number.isInteger(weightKg))
-  const pricePerUnit = quality === 'second' ? product.secondGradePricePerKg : product.pricePerKg
+  const pricePerUnit = product.unit === 'kg' && quality === 'second' ? product.secondGradePricePerKg : product.pricePerKg
   const total = validWeight && pricePerUnit !== undefined ? Number((weightKg * pricePerUnit).toFixed(2)) : undefined
-  const message = validWeight ? buildOrderMessage({ product, weightKg, quality }) : ''
+  const message = validWeight ? buildOrderMessage({ product, weightKg, quality: product.category === 'fruits' ? quality : 'selected' }) : ''
 
   return (
     <div className="section-pad">
@@ -110,7 +110,7 @@ export function Product() {
             ) : null}
 
             <div className="mt-6 space-y-6 border-t border-[color-mix(in_srgb,var(--color-green)_14%,transparent)] pt-6">
-              <fieldset>
+              {product.category === 'fruits' ? <fieldset>
                 <legend className="text-sm font-semibold uppercase tracking-[0.1em] text-[var(--color-soft-green)]">Якість</legend>
                 <div className="mt-3 flex flex-wrap gap-3">
                   {(['selected', 'second'] as const).map((item) => (
@@ -120,7 +120,7 @@ export function Product() {
                     </label>
                   ))}
                 </div>
-              </fieldset>
+              </fieldset> : null}
 
               <div>
                 <label htmlFor="weight" className="text-sm font-semibold uppercase tracking-[0.1em] text-[var(--color-green)]">
