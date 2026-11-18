@@ -53,7 +53,7 @@ export function Footer() {
               <span>Telegram: {site.contacts.phoneDisplay}</span>
             </li>
             <li>
-              <a href={`viber://chat?number=%2B380509823434`} className="inline-flex items-center gap-2 hover:text-white">
+              <a href={`viber://chat?number=%2B${site.contacts.viber.replace(/\D/g, '')}`} className="inline-flex items-center gap-2 hover:text-white">
                 <ContactIcon name="viber" />
                 <span>Viber: {site.contacts.phoneDisplay}</span>
               </a>
