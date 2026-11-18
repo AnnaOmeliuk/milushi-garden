@@ -16,14 +16,12 @@ export function Product() {
   const [imageIndex, setImageIndex] = useState(0)
   const [quality, setQuality] = useState<Quality>('selected')
   const [weight, setWeight] = useState('5')
-  const [copyStatus, setCopyStatus] = useState('')
 
   useEffect(() => {
     if (!product) return
     setImageIndex(0)
     setQuality('selected')
     setWeight(product.unit === 'kg' ? '5' : '1')
-    setCopyStatus('')
   }, [product])
 
   if (!product) {
@@ -39,15 +37,6 @@ export function Product() {
   const total = validWeight && pricePerUnit !== undefined ? Number((weightKg * pricePerUnit).toFixed(2)) : undefined
   const message = validWeight ? buildOrderMessage({ product, weightKg, quality: product.category === 'fruits' ? quality : 'selected' }) : ''
 
-  const copyOrder = async () => {
-    if (!validWeight) return
-    try {
-      await navigator.clipboard.writeText(message)
-      setCopyStatus('Повідомлення скопійовано. Відкрийте Viber та вставте його в чат.')
-    } catch {
-      setCopyStatus('Не вдалося скопіювати автоматично. Виділіть текст нижче та скопіюйте вручну.')
-    }
-  }
 
   return (
     <div className="section-pad">
@@ -168,35 +157,21 @@ export function Product() {
                   Зараз немає в наявності. Напишіть нам, щоб уточнити наступну наявність.
                 </p>
               ) : (
-                <div className="space-y-3">
-                  <p className="text-sm text-muted">Скопіюйте сформоване замовлення, відкрийте чат у Viber та вставте текст.</p>
-                  <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-                    <button
-                      type="button"
-                      disabled={!validWeight}
-                      onClick={copyOrder}
-                      className="inline-flex flex-1 items-center justify-center rounded-md bg-[var(--color-leaf)] px-5 py-3 text-sm font-semibold text-[var(--color-bg)] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                      Скопіювати замовлення
-                    </button>
-                    <a
-                      href={viberOrderUrl()}
-                      className="inline-flex flex-1 items-center justify-center rounded-md border border-[var(--color-leaf)] px-5 py-3 text-sm font-semibold text-[var(--color-green)] transition hover:bg-[color-mix(in_srgb,var(--color-soft-green)_25%,transparent)]"
-                    >
-                      Відкрити Viber
-                    </a>
-                    <a
-                      href={phoneOrderUrl()}
-                      className="inline-flex flex-1 items-center justify-center rounded-md border border-[var(--color-green)] px-5 py-3 text-sm font-semibold text-[var(--color-green)] transition hover:bg-[color-mix(in_srgb,var(--color-soft-green)_25%,transparent)]"
-                    >
-                      Зателефонувати
-                    </a>
-                  </div>
-                  {copyStatus ? <p role="status" className="text-sm text-[var(--color-green)]">{copyStatus}</p> : null}
-                  <details className="rounded-md border border-[color-mix(in_srgb,var(--color-green)_20%,transparent)] p-3">
-                    <summary className="cursor-pointer text-sm font-semibold">Переглянути текст замовлення</summary>
-                    <textarea readOnly value={message} rows={9} aria-label="Текст замовлення" className="mt-3 w-full rounded-md border bg-[var(--color-bg)] p-3 text-sm" />
-                  </details>
+                <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                  <a
+                    href={validWeight ? viberOrderUrl(message) : undefined}
+                    aria-disabled={!validWeight}
+                    tabIndex={validWeight ? undefined : -1}
+                    className={`inline-flex flex-1 items-center justify-center rounded-md bg-[var(--color-leaf)] px-5 py-3 text-sm font-semibold text-[var(--color-bg)] transition hover:brightness-110 ${validWeight ? '' : 'pointer-events-none opacity-50'}`}
+                  >
+                    Замовити у Viber
+                  </a>
+                  <a
+                    href={phoneOrderUrl()}
+                    className="inline-flex flex-1 items-center justify-center rounded-md border border-[var(--color-green)] px-5 py-3 text-sm font-semibold text-[var(--color-green)] transition hover:bg-[color-mix(in_srgb,var(--color-soft-green)_25%,transparent)]"
+                  >
+                    Зателефонувати
+                  </a>
                 </div>
               )}
             </div>

@@ -144,12 +144,12 @@ export function Home() {
               </div>
               <div>
                 <dt className="flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.1em] text-[var(--color-soft-green)]"><ContactIcon name="telegram" />Telegram</dt>
-                <dd className="mt-1 text-lg">+380 50 982 34 34</dd>
+                <dd className="mt-1 text-lg">{site.contacts.phoneDisplay}</dd>
               </div>
               <div>
                 <dt className="flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.1em] text-[var(--color-soft-green)]"><ContactIcon name="viber" />Viber</dt>
                 <dd className="mt-1 text-lg">
-                  <a href="viber://chat?number=%2B380509823434" className="hover:text-[var(--color-green)]">+380 50 982 34 34</a>
+                  <a href={`viber://chat?number=%2B${site.contacts.viber.replace(/\D/g, '')}`} className="hover:text-[var(--color-green)]">{site.contacts.phoneDisplay}</a>
                 </dd>
               </div>
               <div>
