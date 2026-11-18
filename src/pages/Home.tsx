@@ -80,7 +80,7 @@ export function Home() {
             {[
               { step: '01', title: 'Оберіть товар', text: 'Перегляньте актуальні продукти в каталозі.' },
               { step: '02', title: 'Вкажіть кількість', text: 'Вкажіть потрібну кількість та доступні параметри товару.' },
-              { step: '03', title: 'Надішліть у Viber', text: 'Натисніть кнопку замовлення — повідомлення сформується автоматично.' },
+              { step: '03', title: 'Зв’яжіться з нами', text: 'Надішліть готове повідомлення у Viber або зателефонуйте нам.' },
             ].map((item) => (
               <div key={item.step} className="rounded-xl bg-[var(--color-bg)] p-5">
                 <p className="text-sm font-semibold text-[var(--color-soft-green)]">{item.step}</p>
@@ -180,14 +180,22 @@ export function Home() {
           <div className="rounded-2xl bg-[var(--color-green)] p-8 text-[var(--color-bg)]">
             <p className="font-display text-2xl">Готові замовити?</p>
             <p className="mt-3 text-[color-mix(in_srgb,var(--color-bg)_82%,transparent)]">
-              Оберіть товар, вкажіть кількість і натисніть «Замовити у Viber» — повідомлення сформується автоматично.
+              Оберіть товар і зручний спосіб замовлення: напишіть у Viber або зателефонуйте.
             </p>
-            <Link
-              to="/catalog"
-              className="mt-6 inline-flex rounded-md bg-[var(--color-accent)] px-5 py-3 text-sm font-semibold text-[var(--color-text)] transition hover:brightness-105"
-            >
-              Перейти до каталогу
-            </Link>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Link
+                to="/catalog"
+                className="inline-flex min-h-12 items-center justify-center rounded-md bg-[var(--color-accent)] px-5 py-3 text-sm font-semibold text-[var(--color-text)] transition hover:brightness-105"
+              >
+                Перейти до каталогу
+              </Link>
+              <a
+                href={`tel:${site.contacts.phone}`}
+                className="inline-flex min-h-12 items-center justify-center rounded-md border border-[color-mix(in_srgb,var(--color-bg)_55%,transparent)] px-5 py-3 text-sm font-semibold text-[var(--color-bg)] transition hover:bg-[color-mix(in_srgb,var(--color-bg)_12%,transparent)]"
+              >
+                Зателефонувати
+              </a>
+            </div>
           </div>
         </div>
       </section>
