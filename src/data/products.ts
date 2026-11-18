@@ -61,7 +61,7 @@ export const products: Product[] = [
     shortDescription: 'Соковиті, солодкі та запашні домашні груші.',
     description:
       'Груші з нашого саду — м’які, ароматні, ідеальні для свіжого споживання й компотів. Наявність уточнюйте під час замовлення.',
-    images: ['/images/pears.svg'],
+    images: ['/images/products/grushi-1.webp', '/images/products/grushi-2.webp'],
     pricePerKg: 60,
     unit: 'kg',
     availability: 'in_stock',
