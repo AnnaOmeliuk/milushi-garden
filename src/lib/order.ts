@@ -35,9 +35,9 @@ export function buildOrderMessage({ product, weightKg, quality }: OrderSelection
   return lines.join('\n')
 }
 
-export function viberOrderUrl(message: string): string {
+export function viberOrderUrl(): string {
   const number = site.contacts.viber.replace(/\D/g, '')
-  return `viber://chat?number=%2B${number}&draft=${encodeURIComponent(message)}`
+  return `viber://chat?number=%2B${number}`
 }
 
 export function phoneOrderUrl(): string {
