@@ -2,7 +2,6 @@ import { Link } from 'react-router-dom'
 import { ProductCard } from '../components/ProductCard'
 import { ContactIcon } from '../components/ContactIcon'
 import { getFeaturedProducts } from '../data/products'
-import { getCurrentSeasonBlurb } from '../data/season'
 import { site } from '../data/site'
 import type { Category } from '../types/product'
 
@@ -17,7 +16,6 @@ const CATEGORIES: Category[] = [
 
 export function Home() {
   const featured = getFeaturedProducts()
-  const seasonBlurb = getCurrentSeasonBlurb()
 
   return (
     <>
@@ -43,9 +41,6 @@ export function Home() {
           <p className="fade-up-delay-2 mt-5 max-w-md text-base leading-relaxed text-[var(--color-bg)] sm:text-lg">
             {site.shortPitch} {site.location}.
           </p>
-          <p className="fade-up-delay-2 mt-3 text-sm font-semibold tracking-[0.04em] text-[color-mix(in_srgb,var(--color-accent)_90%,white)]">
-            {seasonBlurb}
-          </p>
           <div className="fade-up-delay-2 mt-8 flex flex-wrap gap-3">
             <Link
               to="/catalog"
@@ -70,7 +65,7 @@ export function Home() {
             <div>
               <h2 className="font-display text-3xl text-[var(--color-green)] sm:text-4xl">Наша продукція</h2>
               <p className="mt-2 max-w-xl text-muted">
-                {seasonBlurb}. Показуємо те, що зараз можна замовити.
+                Яблука різних сортів та груші з нашого сімейного саду.
               </p>
             </div>
             <Link
