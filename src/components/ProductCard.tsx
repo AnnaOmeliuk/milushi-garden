@@ -30,9 +30,9 @@ export function ProductCard({ product, availability }: Props) {
       </div>
 
       <div className="flex flex-1 flex-col gap-2 p-4">
-        <div className="flex items-start justify-between gap-3">
+        <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-1">
           <h3 className="font-display text-xl text-[var(--color-text)]">{product.name}</h3>
-          <p className="shrink-0 text-sm font-semibold text-[var(--color-green)]">
+          <p className="text-sm font-semibold text-[var(--color-green)]">
             від {Math.min(product.pricePerKg, product.secondGradePricePerKg ?? product.pricePerKg)} грн/{UNIT_LABELS[product.unit]}
           </p>
         </div>
