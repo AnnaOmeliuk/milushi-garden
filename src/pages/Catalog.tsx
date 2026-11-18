@@ -1,5 +1,4 @@
-import { useMemo } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { ProductCard } from '../components/ProductCard'
 import {
   getEffectiveAvailability,
@@ -56,11 +55,8 @@ export function Catalog() {
     <div className="section-pad">
       <div className="container-page">
         <nav className="text-sm text-muted">
-          <Link to="/" className="hover:text-[var(--color-green)]">
-            Головна
-          </Link>
-          <span className="mx-2">/</span>
-          <span className="text-[var(--color-text)]">Каталог</span>
+          <Link to="/" className="hover:text-[var(--color-green)]">Головна</Link>
+          <span className="mx-2">/</span>Каталог
         </nav>
 
         <h1 className="mt-4 font-display text-4xl text-[var(--color-green)] sm:text-5xl">Каталог</h1>

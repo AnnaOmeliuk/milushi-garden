@@ -1,24 +1,22 @@
 import { site } from '../data/site'
-import type { PackOption, Product, ProductVariant } from '../types/product'
-import { UNIT_LABELS } from '../types/product'
+import type { Product, Quality } from '../types/product'
+import { QUALITY_LABELS } from '../types/product'
 
 export type OrderSelection = {
   product: Product
-  quantity: number
-  pack?: PackOption
-  variant?: ProductVariant
+  weightKg: number
+  quality: Quality
 }
 
-export function buildOrderMessage({
-  product,
-  quantity,
-  pack,
-  variant,
-}: OrderSelection): string {
+export function buildOrderMessage({ product, weightKg, quality }: OrderSelection): string {
+  const price = quality === 'second' ? product.secondGradePricePerKg : product.pricePerKg
   const lines = [
     `Доброго дня! Хочу замовити з ${site.brand}:`,
     '',
     `Товар: ${product.name}`,
+    `Якість: ${QUALITY_LABELS[quality]}`,
+    `Бажана вага: ${weightKg} кг`,
+    `Ціна за кг: ${price === undefined ? 'уточнюється' : `${price} грн`}`,
   ]
 
   if (variant) {
@@ -44,15 +42,9 @@ export function buildOrderMessage({
   return lines.join('\n')
 }
 
-export function telegramOrderUrl(message: string): string {
-  const text = encodeURIComponent(message)
-  return `https://t.me/${site.contacts.telegram}?text=${text}`
-}
-
 export function viberOrderUrl(message: string): string {
   const number = site.contacts.viber.replace(/\D/g, '')
-  const text = encodeURIComponent(message)
-  return `viber://chat?number=%2B${number}&draft=${text}`
+  return `viber://chat?number=%2B${number}&draft=${encodeURIComponent(message)}`
 }
 
 export function phoneOrderUrl(): string {
