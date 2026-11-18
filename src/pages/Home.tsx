@@ -3,16 +3,6 @@ import { ProductCard } from '../components/ProductCard'
 import { ContactIcon } from '../components/ContactIcon'
 import { getFeaturedProducts } from '../data/products'
 import { site } from '../data/site'
-import type { Category } from '../types/product'
-
-const CATEGORIES: Category[] = [
-  'fruits',
-  'vegetables',
-  'berries',
-  'seedlings',
-  'preserves',
-  'other',
-]
 
 export function Home() {
   const featured = getFeaturedProducts()
