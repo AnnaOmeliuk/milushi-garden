@@ -55,7 +55,7 @@ export function Home() {
             <div>
               <h2 className="font-display text-3xl text-[var(--color-green)] sm:text-4xl">Наша продукція</h2>
               <p className="mt-2 max-w-xl text-muted">
-                Яблука різних сортів та груші з нашого сімейного саду.
+                Сезонні продукти з нашого сімейного господарства. Переглядайте актуальні пропозиції в каталозі.
               </p>
             </div>
             <Link
@@ -78,8 +78,8 @@ export function Home() {
           <h2 id="how-to-order-title" className="font-display text-3xl text-[var(--color-green)] sm:text-4xl">Як замовити</h2>
           <div className="mt-6 grid gap-5 sm:grid-cols-3">
             {[
-              { step: '01', title: 'Оберіть товар', text: 'Перегляньте сорти яблук і груш у каталозі.' },
-              { step: '02', title: 'Вкажіть кількість', text: 'Оберіть якість і бажану вагу на сторінці товару.' },
+              { step: '01', title: 'Оберіть товар', text: 'Перегляньте актуальні продукти в каталозі.' },
+              { step: '02', title: 'Вкажіть кількість', text: 'Вкажіть потрібну кількість та доступні параметри товару.' },
               { step: '03', title: 'Надішліть у Viber', text: 'Натисніть кнопку замовлення — повідомлення сформується автоматично.' },
             ].map((item) => (
               <div key={item.step} className="rounded-xl bg-[var(--color-bg)] p-5">
