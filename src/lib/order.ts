@@ -18,8 +18,27 @@ export function buildOrderMessage({ product, weightKg, quality }: OrderSelection
     `Бажана вага: ${weightKg} кг`,
     `Ціна за кг: ${price === undefined ? 'уточнюється' : `${price} грн`}`,
   ]
-  if (price !== undefined) lines.push(`Орієнтовна сума: ${Number((weightKg * price).toFixed(2))} грн`)
-  lines.push('', 'Будь ласка, підтвердіть наявність, остаточну суму та спосіб отримання.')
+
+  if (variant) {
+    lines.push(`Сорт / варіант: ${variant.name}`)
+  }
+
+  if (pack) {
+    lines.push(`Фасування: ${pack.label}`)
+  }
+
+  lines.push(`Кількість: ${quantity} ${UNIT_LABELS[product.unit]}`)
+  lines.push(`Ціна орієнтовно: ${product.pricePerKg} грн / ${UNIT_LABELS[product.unit]}`)
+
+  if (product.preorder) {
+    lines.push('')
+    lines.push('Це попереднє замовлення (під попереднє замовлення).')
+    lines.push('Будь ласка, підтвердіть можливість підготовки й зручну дату видачі.')
+  } else {
+    lines.push('')
+    lines.push('Будь ласка, підтвердіть наявність і зручний час видачі.')
+  }
+
   return lines.join('\n')
 }
 

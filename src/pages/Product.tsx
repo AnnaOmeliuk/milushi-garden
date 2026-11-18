@@ -1,13 +1,12 @@
 import { useEffect, useState } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
-import { getProductBySlug } from '../data/products'
+import { getEffectiveAvailability, getProductBySlug } from '../data/products'
 import {
   buildOrderMessage,
   phoneOrderUrl,
   viberOrderUrl,
 } from '../lib/order'
-import { AVAILABILITY_LABELS, CATEGORY_LABELS, QUALITY_LABELS } from '../types/product'
-import type { Quality } from '../types/product'
+import { CATEGORY_LABELS, UNIT_LABELS, getAvailabilityLabel } from '../types/product'
 
 export function Product() {
   const { slug = '' } = useParams()
@@ -28,12 +27,10 @@ export function Product() {
     return <Navigate to="/catalog" replace />
   }
 
-  const unavailable = product.availability === 'out_of_stock'
-  const weightKg = Number(weight)
-  const validWeight = weight.trim() !== '' && Number.isFinite(weightKg) && weightKg > 0 && weightKg <= 999
-  const pricePerKg = quality === 'second' ? product.secondGradePricePerKg : product.pricePerKg
-  const total = validWeight && pricePerKg !== undefined ? Number((weightKg * pricePerKg).toFixed(2)) : undefined
-  const message = validWeight ? buildOrderMessage({ product, weightKg, quality }) : ''
+  const availability = getEffectiveAvailability(product)
+  const unavailable = availability === 'out_of_stock'
+  const isPreorder = !unavailable && Boolean(product.preorder)
+  const message = buildOrderMessage({ product, quantity, pack, variant })
 
   return (
     <div className="section-pad">
@@ -93,14 +90,19 @@ export function Product() {
             <p
               className={`mt-2 text-sm font-semibold ${
                 unavailable
-                  ? 'text-[#895342]'
-                  : product.availability === 'limited'
-                    ? 'text-[#80612e]'
+                  ? 'text-[#8a4b3a]'
+                  : availability === 'limited'
+                    ? 'text-[#8a6b2a]'
                     : 'text-[var(--color-green)]'
               }`}
             >
-              {AVAILABILITY_LABELS[product.availability]}
+              {getAvailabilityLabel(product, availability)}
             </p>
+            {isPreorder ? (
+              <p className="mt-2 text-sm text-muted">
+                Під попереднє замовлення — узгодимо дату підготовки й видачі в месенджері.
+              </p>
+            ) : null}
 
             <div className="mt-6 space-y-6 border-t border-[color-mix(in_srgb,var(--color-green)_14%,transparent)] pt-6">
               <fieldset>
