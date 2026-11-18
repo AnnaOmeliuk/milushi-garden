@@ -4,19 +4,21 @@ import { QUALITY_LABELS, UNIT_LABELS } from '../types/product'
 
 export type OrderSelection = {
   product: Product
-  weightKg: number
-  quality: Quality
+  quantity: number
+  quality?: Quality
 }
 
-export function buildOrderMessage({ product, weightKg, quality }: OrderSelection): string {
-  const price = quality === 'second' ? product.secondGradePricePerKg : product.pricePerKg
+export function buildOrderMessage({ product, quantity, quality }: OrderSelection): string {
+  const hasQualityOptions = product.secondGradePricePerKg !== undefined
+  const selectedQuality = hasQualityOptions && quality === 'second' ? 'second' : 'selected'
+  const price = selectedQuality === 'second' ? product.secondGradePricePerKg! : product.pricePerKg
   const name = product.name.replace(/^Яблука «(.+)»$/, '$1')
   const lines = [
     'Вітаю! Хочу замовити:',
     name,
-    ...(product.category === 'fruits' ? [QUALITY_LABELS[quality]] : []),
-    `${weightKg} ${UNIT_LABELS[product.unit]}`,
-    price === undefined ? 'Ціну уточніть' : `${Number((weightKg * price).toFixed(2))} грн`,
+    ...(hasQualityOptions ? [QUALITY_LABELS[selectedQuality]] : []),
+    `${quantity} ${UNIT_LABELS[product.unit]}`,
+    price === undefined ? 'Ціну уточніть' : `${Number((quantity * price).toFixed(2))} грн`,
   ]
   return lines.join('\n')
 }
