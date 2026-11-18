@@ -1,13 +1,13 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
-import { getProductBySlug } from '../data/products'
+import { getEffectiveAvailability, getProductBySlug } from '../data/products'
 import {
   buildOrderMessage,
   phoneOrderUrl,
   telegramOrderUrl,
   viberOrderUrl,
 } from '../lib/order'
-import { AVAILABILITY_LABELS, CATEGORY_LABELS, UNIT_LABELS } from '../types/product'
+import { CATEGORY_LABELS, UNIT_LABELS, getAvailabilityLabel } from '../types/product'
 
 export function Product() {
   const { slug = '' } = useParams()
@@ -39,7 +39,9 @@ export function Product() {
     return <Navigate to="/catalog" replace />
   }
 
-  const unavailable = product.availability === 'out_of_stock'
+  const availability = getEffectiveAvailability(product)
+  const unavailable = availability === 'out_of_stock'
+  const isPreorder = !unavailable && Boolean(product.preorder)
   const message = buildOrderMessage({ product, quantity, pack, variant })
 
   return (
@@ -103,13 +105,18 @@ export function Product() {
               className={`mt-2 text-sm font-semibold ${
                 unavailable
                   ? 'text-[#8a4b3a]'
-                  : product.availability === 'limited'
+                  : availability === 'limited'
                     ? 'text-[#8a6b2a]'
                     : 'text-[var(--color-green)]'
               }`}
             >
-              {AVAILABILITY_LABELS[product.availability]}
+              {getAvailabilityLabel(product, availability)}
             </p>
+            {isPreorder ? (
+              <p className="mt-2 text-sm text-muted">
+                Під попереднє замовлення — узгодимо дату підготовки й видачі в месенджері.
+              </p>
+            ) : null}
 
             <div className="mt-6 space-y-6 border-t border-[color-mix(in_srgb,var(--color-green)_14%,transparent)] pt-6">
               {product.variants && product.variants.length > 0 ? (
