@@ -82,6 +82,3 @@ export function getFeaturedProducts(): Product[] {
   return products.filter((product) => product.featured)
 }
 
-export function getProductsByCategory(category: Product['category'] | 'all'): Product[] {
-  return category === 'all' ? products : products.filter((product) => product.category === category)
-}
