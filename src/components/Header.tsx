@@ -1,10 +1,14 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { site } from '../data/site'
 
 export function Header() {
   const [open, setOpen] = useState(false)
   const location = useLocation()
+
+  useEffect(() => {
+    setOpen(false)
+  }, [location.pathname, location.hash])
 
   const hrefFor = (href: string) => {
     if (href.startsWith('/#') && location.pathname === '/') {
