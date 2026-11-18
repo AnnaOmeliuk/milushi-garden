@@ -41,7 +41,7 @@ export function Product() {
   return (
     <div className="section-pad">
       <div className="container-page">
-        <nav className="text-sm text-muted">
+        <nav className="flex flex-wrap items-center gap-y-1 text-sm text-muted">
           <Link to="/" className="hover:text-[var(--color-green)]">
             Головна
           </Link>
@@ -53,7 +53,7 @@ export function Product() {
           <span className="text-[var(--color-text)]">{product.name}</span>
         </nav>
 
-        <div className="mt-8 grid gap-10 lg:grid-cols-[1.05fr_0.95fr]">
+        <div className="mt-6 grid gap-7 sm:mt-8 lg:grid-cols-[1.05fr_0.95fr] lg:gap-10">
           <div>
             <div className="overflow-hidden rounded-2xl bg-[var(--color-cream)]">
               <img
@@ -74,7 +74,7 @@ export function Product() {
                         ? 'border-[var(--color-green)]'
                         : 'border-transparent opacity-80 hover:opacity-100'
                     }`}
-                    aria-label={`Фото ${index + 1}`}
+                    aria-label={`Показати фото ${index + 1} з ${product.images.length}`} aria-pressed={index === imageIndex}
                   >
                     <img src={src} alt="" className="h-20 w-24 object-cover" />
                   </button>
@@ -115,7 +115,7 @@ export function Product() {
                 <legend className="text-sm font-semibold uppercase tracking-[0.1em] text-[var(--color-soft-green)]">Якість</legend>
                 <div className="mt-3 flex flex-wrap gap-3">
                   {(['selected', 'second'] as const).map((item) => (
-                    <label key={item} className="flex cursor-pointer items-center gap-2 rounded-md border px-4 py-2">
+                    <label key={item} className="flex min-h-11 cursor-pointer items-center gap-2 rounded-md border px-4 py-2">
                       <input type="radio" name="quality" checked={quality === item} onChange={() => setQuality(item)} />
                       {QUALITY_LABELS[item]}
                     </label>
@@ -139,7 +139,7 @@ export function Product() {
                   onChange={(event) => setWeight(event.target.value)}
                   aria-invalid={!validWeight}
                   aria-describedby="weight-hint"
-                  className="mt-3 block w-36 rounded-md border border-[color-mix(in_srgb,var(--color-green)_25%,transparent)] bg-[var(--color-bg)] px-3 py-2.5 text-lg font-semibold text-[var(--color-text)] disabled:opacity-50"
+                  className="mt-3 block min-h-11 w-36 rounded-md border border-[color-mix(in_srgb,var(--color-green)_25%,transparent)] bg-[var(--color-bg)] px-3 py-2.5 text-lg font-semibold text-[var(--color-text)] disabled:opacity-50"
                 />
                 <p id="weight-hint" className="mt-2 text-sm text-muted">
                   {validWeight ? 'Фасування узгодимо під час замовлення.' : 'Введіть коректну кількість від 0,1 до 999.'}
@@ -162,13 +162,13 @@ export function Product() {
                     href={validWeight ? viberOrderUrl(message) : undefined}
                     aria-disabled={!validWeight}
                     tabIndex={validWeight ? undefined : -1}
-                    className={`inline-flex flex-1 items-center justify-center rounded-md bg-[var(--color-leaf)] px-5 py-3 text-sm font-semibold text-[var(--color-bg)] transition hover:brightness-110 ${validWeight ? '' : 'pointer-events-none opacity-50'}`}
+                    className={`inline-flex min-h-12 flex-1 items-center justify-center rounded-md bg-[var(--color-leaf)] px-5 py-3 text-sm font-semibold text-[var(--color-bg)] transition hover:brightness-110 ${validWeight ? '' : 'pointer-events-none opacity-50'}`}
                   >
                     Замовити у Viber
                   </a>
                   <a
                     href={phoneOrderUrl()}
-                    className="inline-flex flex-1 items-center justify-center rounded-md border border-[var(--color-green)] px-5 py-3 text-sm font-semibold text-[var(--color-green)] transition hover:bg-[color-mix(in_srgb,var(--color-soft-green)_25%,transparent)]"
+                    className="inline-flex min-h-12 flex-1 items-center justify-center rounded-md border border-[var(--color-green)] px-5 py-3 text-sm font-semibold text-[var(--color-green)] transition hover:bg-[color-mix(in_srgb,var(--color-soft-green)_25%,transparent)]"
                   >
                     Зателефонувати
                   </a>
