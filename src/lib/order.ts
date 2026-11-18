@@ -29,15 +29,8 @@ export function buildOrderMessage({ product, weightKg, quality }: OrderSelection
 
   lines.push(`Кількість: ${quantity} ${UNIT_LABELS[product.unit]}`)
   lines.push(`Ціна орієнтовно: ${product.pricePerKg} грн / ${UNIT_LABELS[product.unit]}`)
-
-  if (product.preorder) {
-    lines.push('')
-    lines.push('Це попереднє замовлення (під попереднє замовлення).')
-    lines.push('Будь ласка, підтвердіть можливість підготовки й зручну дату видачі.')
-  } else {
-    lines.push('')
-    lines.push('Будь ласка, підтвердіть наявність і зручний час видачі.')
-  }
+  lines.push('')
+  lines.push('Будь ласка, підтвердіть наявність і зручний час видачі.')
 
   return lines.join('\n')
 }

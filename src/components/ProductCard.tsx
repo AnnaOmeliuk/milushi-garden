@@ -1,16 +1,13 @@
 import { Link } from 'react-router-dom'
-import type { Availability, Product } from '../types/product'
-import { CATEGORY_LABELS, UNIT_LABELS, getAvailabilityLabel } from '../types/product'
-import { getEffectiveAvailability } from '../data/products'
+import type { Product } from '../types/product'
+import { AVAILABILITY_LABELS, CATEGORY_LABELS, UNIT_LABELS } from '../types/product'
 
 type Props = {
   product: Product
-  availability?: Availability
 }
 
-export function ProductCard({ product, availability }: Props) {
-  const status = availability ?? getEffectiveAvailability(product)
-  const unavailable = status === 'out_of_stock'
+export function ProductCard({ product }: Props) {
+  const unavailable = product.availability === 'out_of_stock'
 
   return (
     <Link
@@ -39,14 +36,10 @@ export function ProductCard({ product, availability }: Props) {
         <p className="text-sm text-muted">{product.shortDescription}</p>
         <p
           className={`mt-auto pt-2 text-xs font-semibold uppercase tracking-[0.08em] ${
-            unavailable
-              ? 'text-[#8a4b3a]'
-              : status === 'limited'
-                ? 'text-[#8a6b2a]'
-                : 'text-[var(--color-green)]'
+            unavailable ? 'text-[#8a4b3a]' : product.availability === 'limited' ? 'text-[#8a6b2a]' : 'text-[var(--color-green)]'
           }`}
         >
-          {getAvailabilityLabel(product, status)}
+          {AVAILABILITY_LABELS[product.availability]}
         </p>
       </div>
     </Link>
