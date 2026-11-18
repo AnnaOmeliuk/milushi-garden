@@ -9,7 +9,7 @@ export function Home() {
 
   return (
     <>
-      <section className="relative min-h-[calc(100svh-var(--header-h))] overflow-hidden">
+      <section className="relative min-h-[min(42rem,calc(100svh-var(--header-h)))] sm:min-h-[calc(100svh-var(--header-h))] overflow-hidden">
         <div
           className="absolute inset-0 scale-x-[-1] bg-cover bg-center"
           style={{ backgroundImage: "url('/images/products/orchard-about.webp')" }}
@@ -20,7 +20,7 @@ export function Home() {
           aria-hidden="true"
         />
 
-        <div className="container-page relative flex min-h-[calc(100svh-var(--header-h))] flex-col justify-end pb-14 pt-24 sm:justify-center sm:pb-20">
+        <div className="container-page relative flex min-h-[min(42rem,calc(100svh-var(--header-h)))] sm:min-h-[calc(100svh-var(--header-h))] flex-col justify-end pb-14 pt-24 sm:justify-center sm:pb-20">
           <div className="max-w-[min(100%,38rem)]" style={{ textShadow: "0 2px 18px rgba(0,0,0,0.32)" }}>
           <p className="fade-up font-display text-[clamp(2.6rem,8vw,5.4rem)] leading-[1.05] tracking-[0.02em] text-[var(--color-bg)]">
             {site.brand}
@@ -34,15 +34,15 @@ export function Home() {
           <div className="fade-up-delay-2 mt-8 flex flex-wrap gap-3">
             <Link
               to="/catalog"
-              className="inline-flex items-center justify-center rounded-md bg-[var(--color-accent)] px-5 py-3 text-sm font-semibold text-[var(--color-text)] transition hover:brightness-105"
+              className="inline-flex min-h-12 items-center justify-center rounded-md bg-[var(--color-accent)] px-5 py-3 text-sm font-semibold text-[var(--color-text)] transition hover:brightness-105"
             >
-              Дивитись продукцію
+              Переглянути каталог
             </Link>
             <a
-              href="#contacts"
-              className="inline-flex items-center justify-center rounded-md border border-[color-mix(in_srgb,var(--color-bg)_55%,transparent)] px-5 py-3 text-sm font-semibold text-[var(--color-bg)] transition hover:bg-[color-mix(in_srgb,var(--color-bg)_12%,transparent)]"
+              href="#delivery"
+              className="inline-flex min-h-12 items-center justify-center rounded-md border border-[color-mix(in_srgb,var(--color-bg)_55%,transparent)] px-5 py-3 text-sm font-semibold text-[var(--color-bg)] transition hover:bg-[color-mix(in_srgb,var(--color-bg)_12%,transparent)]"
             >
-              Зв’язатись
+              Доставка та оплата
             </a>
           </div>
           </div>
@@ -65,9 +65,28 @@ export function Home() {
               Весь каталог
             </Link>
           </div>
-          <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-6 grid gap-5 sm:mt-8 sm:grid-cols-2 lg:grid-cols-3">
             {featured.map((product) => (
               <ProductCard key={product.slug} product={product} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="how-to-order-title" className="border-y border-[color-mix(in_srgb,var(--color-green)_12%,transparent)] bg-[color-mix(in_srgb,var(--color-soft-green)_10%,transparent)] py-10 sm:py-14">
+        <div className="container-page">
+          <h2 id="how-to-order-title" className="font-display text-3xl text-[var(--color-green)] sm:text-4xl">Як замовити</h2>
+          <div className="mt-6 grid gap-5 sm:grid-cols-3">
+            {[
+              { step: '01', title: 'Оберіть товар', text: 'Перегляньте сорти яблук і груш у каталозі.' },
+              { step: '02', title: 'Вкажіть кількість', text: 'Оберіть якість і бажану вагу на сторінці товару.' },
+              { step: '03', title: 'Надішліть у Viber', text: 'Натисніть кнопку замовлення — повідомлення сформується автоматично.' },
+            ].map((item) => (
+              <div key={item.step} className="rounded-xl bg-[var(--color-bg)] p-5">
+                <p className="text-sm font-semibold text-[var(--color-soft-green)]">{item.step}</p>
+                <h3 className="mt-2 font-display text-xl text-[var(--color-green)]">{item.title}</h3>
+                <p className="mt-2 text-sm text-muted">{item.text}</p>
+              </div>
             ))}
           </div>
         </div>
@@ -161,7 +180,7 @@ export function Home() {
           <div className="rounded-2xl bg-[var(--color-green)] p-8 text-[var(--color-bg)]">
             <p className="font-display text-2xl">Готові замовити?</p>
             <p className="mt-3 text-[color-mix(in_srgb,var(--color-bg)_82%,transparent)]">
-              Оберіть товар у каталозі — кнопка Viber допоможе сформувати повідомлення із замовленням.
+              Оберіть товар, вкажіть кількість і натисніть «Замовити у Viber» — повідомлення сформується автоматично.
             </p>
             <Link
               to="/catalog"
