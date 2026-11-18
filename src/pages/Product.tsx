@@ -6,7 +6,8 @@ import {
   phoneOrderUrl,
   viberOrderUrl,
 } from '../lib/order'
-import { CATEGORY_LABELS, UNIT_LABELS, getAvailabilityLabel } from '../types/product'
+import { CATEGORY_LABELS, UNIT_LABELS, QUALITY_LABELS, getAvailabilityLabel } from '../types/product'
+import type { Quality } from '../types/product'
 
 export function Product() {
   const { slug = '' } = useParams()
@@ -30,7 +31,11 @@ export function Product() {
   const availability = getEffectiveAvailability(product)
   const unavailable = availability === 'out_of_stock'
   const isPreorder = !unavailable && Boolean(product.preorder)
-  const message = buildOrderMessage({ product, quantity, pack, variant })
+  const weightKg = Number(weight)
+  const validWeight = weight.trim() !== '' && Number.isFinite(weightKg) && weightKg > 0 && weightKg <= 999 && (product.unit === 'kg' || Number.isInteger(weightKg))
+  const pricePerUnit = quality === 'second' ? product.secondGradePricePerKg : product.pricePerKg
+  const total = validWeight && pricePerUnit !== undefined ? Number((weightKg * pricePerUnit).toFixed(2)) : undefined
+  const message = validWeight ? buildOrderMessage({ product, weightKg, quality }) : ''
 
   return (
     <div className="section-pad">
@@ -119,7 +124,7 @@ export function Product() {
 
               <div>
                 <label htmlFor="weight" className="text-sm font-semibold uppercase tracking-[0.1em] text-[var(--color-green)]">
-                  Бажана кількість (кг)
+                  Бажана кількість ({UNIT_LABELS[product.unit]})
                 </label>
                 <input
                   id="weight"
@@ -127,7 +132,7 @@ export function Product() {
                   inputMode="decimal"
                   min="0.1"
                   max="999"
-                  step="0.1"
+                  step={product.unit === 'kg' ? "0.1" : "1"}
                   value={weight}
                   disabled={unavailable}
                   onChange={(event) => setWeight(event.target.value)}
@@ -136,7 +141,7 @@ export function Product() {
                   className="mt-3 block w-36 rounded-md border border-[color-mix(in_srgb,var(--color-green)_25%,transparent)] bg-[var(--color-bg)] px-3 py-2.5 text-lg font-semibold text-[var(--color-text)] disabled:opacity-50"
                 />
                 <p id="weight-hint" className="mt-2 text-sm text-muted">
-                  {validWeight ? 'Фасування узгодимо під час замовлення.' : 'Введіть вагу більше 0 і не більше 999 кг.'}
+                  {validWeight ? 'Фасування узгодимо під час замовлення.' : 'Введіть коректну кількість від 0,1 до 999.'}
                 </p>
               </div>
               <div className="rounded-xl bg-[var(--color-cream)] p-5">
