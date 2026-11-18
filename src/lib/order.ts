@@ -19,16 +19,9 @@ export function buildOrderMessage({ product, weightKg, quality }: OrderSelection
     `Ціна за кг: ${price === undefined ? 'уточнюється' : `${price} грн`}`,
   ]
 
-  if (variant) {
-    lines.push(`Сорт / варіант: ${variant.name}`)
+  if (price !== undefined) {
+    lines.push(`Орієнтовна сума: ${Number((weightKg * price).toFixed(2))} грн`)
   }
-
-  if (pack) {
-    lines.push(`Фасування: ${pack.label}`)
-  }
-
-  lines.push(`Кількість: ${quantity} ${UNIT_LABELS[product.unit]}`)
-  lines.push(`Ціна орієнтовно: ${product.pricePerKg} грн / ${UNIT_LABELS[product.unit]}`)
 
   if (product.preorder) {
     lines.push('')
