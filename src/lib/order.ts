@@ -1,6 +1,6 @@
 import { site } from '../data/site'
 import type { Product, Quality } from '../types/product'
-import { QUALITY_LABELS } from '../types/product'
+import { QUALITY_LABELS, UNIT_LABELS } from '../types/product'
 
 export type OrderSelection = {
   product: Product
@@ -14,9 +14,9 @@ export function buildOrderMessage({ product, weightKg, quality }: OrderSelection
     `Доброго дня! Хочу замовити з ${site.brand}:`,
     '',
     `Товар: ${product.name}`,
-    `Якість: ${QUALITY_LABELS[quality]}`,
-    `Бажана вага: ${weightKg} кг`,
-    `Ціна за кг: ${price === undefined ? 'уточнюється' : `${price} грн`}`,
+    ...(product.category === 'fruits' ? [`Якість: ${QUALITY_LABELS[quality]}`] : []),
+    `Бажана кількість: ${weightKg} ${UNIT_LABELS[product.unit]}`,
+    `Ціна за ${UNIT_LABELS[product.unit]}: ${price === undefined ? 'уточнюється' : `${price} грн`}`,
   ]
 
   if (price !== undefined) {
