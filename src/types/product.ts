@@ -12,8 +12,9 @@ export type Product = {
   description: string
   images: string[]
   pricePerKg: number
+  /** Optional quality selection; only products with second-grade pricing expose it. */
   secondGradePricePerKg?: number
-  unit: 'kg' | 'pcs' | 'jar'
+  unit: 'kg' | 'pcs' | 'jar' | 'bunch' | 'set'
   availability: Availability
   /** Pre-order (під попереднє замовлення). Prefer with availability: 'limited'. */
   preorder?: boolean
@@ -42,7 +43,7 @@ export function getAvailabilityLabel(product: Product, availability: Availabilit
 }
 
 export const UNIT_LABELS: Record<Product['unit'], string> = {
-  kg: 'кг', pcs: 'шт', jar: 'банка',
+  kg: 'кг', pcs: 'шт', jar: 'банка', bunch: 'пучок', set: 'набір',
 }
 export const QUALITY_LABELS: Record<Quality, string> = {
   selected: 'Відбірні', second: 'Другий сорт',
