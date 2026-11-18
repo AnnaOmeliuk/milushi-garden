@@ -89,8 +89,8 @@ export function Product() {
             <h1 className="mt-2 font-display text-4xl text-[var(--color-green)] sm:text-5xl">{product.name}</h1>
             <p className="mt-3 text-lg text-muted">{product.shortDescription}</p>
             <p className="mt-5 font-display text-3xl text-[var(--color-text)]">
-              {quality === 'second' ? (product.secondGradePricePerKg === undefined ? 'Ціна уточнюється' : `${product.secondGradePricePerKg} грн`) : `${product.pricePerKg} грн`}
-              {(quality !== "second" || product.secondGradePricePerKg !== undefined) && <span className="ml-1 text-base font-medium text-muted">/ кг</span>}
+              {product.unit === 'kg' && quality === 'second' ? (product.secondGradePricePerKg === undefined ? 'Ціна уточнюється' : `${product.secondGradePricePerKg} грн`) : `${product.pricePerKg} грн`}
+              {(product.unit !== "kg" || quality !== "second" || product.secondGradePricePerKg !== undefined) && <span className="ml-1 text-base font-medium text-muted">/ {UNIT_LABELS[product.unit]}</span>}
             </p>
             <p
               className={`mt-2 text-sm font-semibold ${
