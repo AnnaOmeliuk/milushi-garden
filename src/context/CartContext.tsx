@@ -16,7 +16,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>(readCart)
   useEffect(() => { localStorage.setItem(CART_KEY, JSON.stringify(items)) }, [items])
   const add = (slug: string, quality: Quality, quantity: number) => {
-    if (!Number.isFinite(quantity) || quantity <= 0 || quantity > 999) return
+    if (!Number.isFinite(quantity) || quantity < 1 || quantity > 999 || !Number.isInteger(quantity)) return
     setItems(previous => {
       const exists = previous.some(item => item.slug === slug && item.quality === quality)
       return exists ? previous.map(item => item.slug === slug && item.quality === quality
@@ -25,7 +25,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     })
   }
   const update = (slug: string, quality: Quality, quantity: number) => {
-    if (!Number.isFinite(quantity) || quantity <= 0 || quantity > 999) return
+    if (!Number.isFinite(quantity) || quantity < 1 || quantity > 999 || !Number.isInteger(quantity)) return
     setItems(previous => previous.map(item => item.slug === slug && item.quality === quality ? { ...item, quantity } : item))
   }
   const remove = (slug: string, quality: Quality) => setItems(previous => previous.filter(item => item.slug !== slug || item.quality !== quality))
