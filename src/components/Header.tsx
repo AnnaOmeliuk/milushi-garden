@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { site } from '../data/site'
+import { useCart } from '../context/CartContext'
 
 export function Header() {
   const [open, setOpen] = useState(false)
   const location = useLocation()
+  const { items } = useCart()
 
   useEffect(() => {
     setOpen(false)
@@ -49,6 +51,8 @@ export function Header() {
             ),
           )}
         </nav>
+
+        <Link to="/cart" aria-label={`Кошик, ${items.length} позицій`} className="ml-auto inline-flex min-h-10 items-center gap-2 rounded-md border border-[var(--color-green)] px-3 text-sm font-semibold text-[var(--color-green)] md:ml-0">Кошик ({items.length})</Link>
 
         <button
           type="button"
