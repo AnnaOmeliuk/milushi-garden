@@ -21,6 +21,8 @@ const apples = [
 ] as const
 
 const applePhotos: Record<string, string[]> = {
+  'idared': ['/images/products/idared.svg'],
+  'rubin': ['/images/products/rubin.svg'],
   'skifske-zoloto': ['/images/products/skifske-zoloto-1.webp', '/images/products/skifske-zoloto-2.webp', '/images/products/skifske-zoloto-3.webp', '/images/products/skifske-zoloto-4.webp', '/images/products/skifske-zoloto-5.webp', '/images/products/skifske-zoloto-6.webp'],
   'raika': ['/images/products/raika-1.webp', '/images/products/raika-2.webp'],
   'champion': ['/images/products/champion-1.webp', '/images/products/champion-2.webp', '/images/products/champion-3.webp'],
