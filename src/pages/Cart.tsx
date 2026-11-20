@@ -47,9 +47,9 @@ export function Cart() {
               </div>
               <div className="mt-4 flex items-center justify-between gap-3">
                 <label className="text-sm">Кількість ({UNIT_LABELS[item.product.unit]})
-                  <input type="number" min={item.product.unit === 'kg' ? '0.1' : '1'} max="999" step={item.product.unit === 'kg' ? '0.1' : '1'} value={item.quantity} onChange={event => {
+                  <input type="number" min="1" max="999" step="1" value={item.quantity} onChange={event => {
                     const value = Number(event.target.value)
-                    if (value > 0 && value <= 999 && (item.product.unit === 'kg' || Number.isInteger(value))) update(item.slug, item.quality, value)
+                    if (value >= 1 && value <= 999 && Number.isInteger(value)) update(item.slug, item.quality, value)
                   }} className="ml-2 w-24 rounded-md border px-2 py-2" />
                 </label>
                 <strong>{Number((price * item.quantity).toFixed(2))} грн</strong>
