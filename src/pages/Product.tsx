@@ -36,7 +36,7 @@ export function Product() {
   const unavailable = availability === 'out_of_stock'
   const isPreorder = !unavailable && Boolean(product.preorder)
   const weightKg = Number(weight)
-  const validWeight = weight.trim() !== '' && Number.isFinite(weightKg) && weightKg > 0 && weightKg <= 999 && (product.unit === 'kg' || Number.isInteger(weightKg))
+  const validWeight = weight.trim() !== '' && Number.isFinite(weightKg) && weightKg >= 1 && weightKg <= 999 && Number.isInteger(weightKg)
   const pricePerUnit = product.unit === 'kg' && quality === 'second' ? product.secondGradePricePerKg : product.pricePerKg
   const total = validWeight && pricePerUnit !== undefined ? Number((weightKg * pricePerUnit).toFixed(2)) : undefined
   const message = validWeight ? buildOrderMessage({ product, weightKg, quality: product.category === 'fruits' ? quality : 'selected' }) : ''
@@ -135,9 +135,9 @@ export function Product() {
                   id="weight"
                   type="number"
                   inputMode="decimal"
-                  min="0.1"
+                  min="1"
                   max="999"
-                  step={product.unit === 'kg' ? "0.1" : "1"}
+                  step="1"
                   value={weight}
                   disabled={unavailable}
                   onChange={(event) => setWeight(event.target.value)}
@@ -146,7 +146,7 @@ export function Product() {
                   className="mt-3 block w-36 rounded-md border border-[color-mix(in_srgb,var(--color-green)_25%,transparent)] bg-[var(--color-bg)] px-3 py-2.5 text-lg font-semibold text-[var(--color-text)] disabled:opacity-50"
                 />
                 <p id="weight-hint" className="mt-2 text-sm text-muted">
-                  {validWeight ? 'Фасування узгодимо під час замовлення.' : 'Введіть коректну кількість від 0,1 до 999.'}
+                  {validWeight ? 'Фасування узгодимо під час замовлення.' : 'Введіть коректну кількість від 1 до 999 цілих кг.'}
                 </p>
               </div>
               <div className="rounded-xl bg-[var(--color-cream)] p-5">
