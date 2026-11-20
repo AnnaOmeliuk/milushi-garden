@@ -12,7 +12,7 @@ export function readCart(): CartItem[] {
       item && typeof item.slug === 'string' &&
       (item.quality === 'selected' || item.quality === 'second') &&
       typeof item.quantity === 'number' && Number.isFinite(item.quantity) &&
-      item.quantity >= 1 && item.quantity <= 999 && Number.isInteger(item.quantity)
+      item.quantity >= 1 && item.quantity <= 999 && Number.isInteger(item.quantity * 2)
     )
   } catch { return [] }
 }
