@@ -8,9 +8,12 @@ import {
 } from '../lib/order'
 import { CATEGORY_LABELS, UNIT_LABELS, QUALITY_LABELS, getAvailabilityLabel } from '../types/product'
 import type { Quality } from '../types/product'
+import { useCart } from '../context/CartContext'
 
 export function Product() {
   const { slug = '' } = useParams()
+  const { add } = useCart()
+  const [added, setAdded] = useState(false)
   const product = getProductBySlug(slug)
 
   const [imageIndex, setImageIndex] = useState(0)
@@ -19,6 +22,7 @@ export function Product() {
 
   useEffect(() => {
     if (!product) return
+    setAdded(false)
     setImageIndex(0)
     setQuality('selected')
     setWeight(product.unit === 'kg' ? '5' : '1')
@@ -174,6 +178,7 @@ export function Product() {
                 </div>
               ) : (
                 <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                  <button type="button" disabled={!validWeight || total === undefined} onClick={() => { add(product.slug, product.secondGradePricePerKg !== undefined ? quality : 'selected', weightKg); setAdded(true) }} className="inline-flex flex-1 items-center justify-center rounded-md bg-[var(--color-green)] px-5 py-3 text-sm font-semibold text-[var(--color-bg)] disabled:opacity-50">{added ? 'Додано до кошика ✓' : 'Додати до кошика'}</button>
                   <a
                     href={validWeight ? viberOrderUrl(message) : undefined}
                     aria-disabled={!validWeight}
@@ -190,6 +195,7 @@ export function Product() {
                   </a>
                 </div>
               )}
+              {added && !unavailable && <Link to="/cart" className="inline-block text-sm font-semibold text-[var(--color-green)] underline">Перейти до кошика</Link>}
             </div>
 
             <div className="mt-8">
