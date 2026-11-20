@@ -153,9 +153,25 @@ export function Product() {
                 <p className="mt-2 text-sm text-muted">Наявність, остаточну вагу та суму підтвердимо під час замовлення.</p>
               </div>
               {unavailable ? (
-                <p className="rounded-md bg-[color-mix(in_srgb,#895342_12%,transparent)] px-4 py-3 text-sm text-[#895342]">
-                  Зараз немає в наявності. Напишіть нам, щоб уточнити наступну наявність.
-                </p>
+                <div className="space-y-3">
+                  <p className="rounded-md bg-[color-mix(in_srgb,#895342_12%,transparent)] px-4 py-3 text-sm text-[#895342]">
+                    Цього товару наразі немає в наявності. Перегляньте інші смаколики з нашого саду!
+                  </p>
+                  <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                    <Link
+                      to="/catalog"
+                      className="inline-flex min-h-11 flex-1 items-center justify-center rounded-md bg-[var(--color-green)] px-5 py-3 text-sm font-semibold text-[var(--color-bg)] transition hover:bg-[var(--color-leaf)]"
+                    >
+                      Переглянути каталог
+                    </Link>
+                    <a
+                      href={phoneOrderUrl()}
+                      className="inline-flex min-h-11 flex-1 items-center justify-center rounded-md border border-[var(--color-green)] px-5 py-3 text-sm font-semibold text-[var(--color-green)] transition hover:bg-[color-mix(in_srgb,var(--color-soft-green)_25%,transparent)]"
+                    >
+                      Зателефонувати
+                    </a>
+                  </div>
+                </div>
               ) : (
                 <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                   <a
