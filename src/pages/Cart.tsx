@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 import { getProductBySlug, getEffectiveAvailability } from '../data/products'
 import { cartPrice } from '../lib/cart'
-import { QUALITY_LABELS, UNIT_LABELS } from '../types/product'
+import { UNIT_LABELS } from '../types/product'
 
 function formatPhone(input: string): string {
   let digits = input.replace(/\D/g, '')
