@@ -154,7 +154,11 @@ export function Cart() {
         const price = cartPrice(item.product, item.quality)
         return <div key={item.slug + item.quality} className="rounded-xl border border-[var(--color-soft-green)] p-4">
           <div className="flex flex-wrap items-start justify-between gap-3">
-            <div><Link to={`/product/${item.slug}`} className="font-semibold text-[var(--color-green)] hover:underline">{item.product.name}</Link>
+            <div className="flex min-w-0 flex-1 items-start gap-3">
+              <Link to={`/product/${item.slug}`} className="shrink-0 overflow-hidden rounded-lg bg-[var(--color-cream)]" aria-label={`Переглянути ${item.product.name}`}>
+                <img src={item.product.images[0]} alt={item.product.name} loading="lazy" className="h-20 w-20 object-cover sm:h-24 sm:w-24" />
+              </Link>
+              <div className="min-w-0"><Link to={`/product/${item.slug}`} className="font-semibold text-[var(--color-green)] hover:underline">{item.product.name}</Link>
               {item.product.secondGradePricePerKg !== undefined && (
                 <label className="mt-2 block text-sm text-muted">Якість
                   <select value={item.quality}
@@ -181,6 +185,7 @@ export function Cart() {
                 </div>
               })()}
               {unavailable && <p className="text-sm text-[#8a4b3a]">Немає в наявності — видаліть товар для оформлення</p>}
+              </div>
             </div>
             <button type="button" className="text-sm text-[#8a4b3a] underline" onClick={() => remove(item.slug, item.quality)}>Видалити</button>
           </div>
