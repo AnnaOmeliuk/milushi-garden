@@ -58,7 +58,7 @@ function createRequestId(): string {
 }
 
 export function Cart() {
-  const { items, update, remove, clear } = useCart()
+  const { items, update, changeQuality, remove, clear } = useCart()
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('+380')
   const [delivery, setDelivery] = useState<'pickup' | 'lutsk'>('pickup')
@@ -132,7 +132,17 @@ export function Cart() {
         return <div key={item.slug + item.quality} className="rounded-xl border border-[var(--color-soft-green)] p-4">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div><Link to={`/product/${item.slug}`} className="font-semibold text-[var(--color-green)] hover:underline">{item.product.name}</Link>
-              {item.product.secondGradePricePerKg !== undefined && <p className="text-sm text-muted">{QUALITY_LABELS[item.quality]}</p>}
+              {item.product.secondGradePricePerKg !== undefined && (
+                <label className="mt-2 block text-sm text-muted">Якість
+                  <select value={item.quality}
+                    onChange={event => { pendingId.current = null; changeQuality(item.slug, item.quality, event.target.value as 'selected' | 'second') }}
+                    className="mt-1 block min-h-11 rounded-md border border-[var(--color-soft-green)] bg-[var(--color-bg)] px-3 text-[var(--color-text)]"
+                    aria-label={`Якість: ${item.product.name}`}>
+                    <option value="selected" disabled={item.quality !== 'selected' && (items.find(other => other.slug === item.slug && other.quality === 'selected')?.quantity ?? 0) + item.quantity > 999}>Відбірні</option>
+                    <option value="second" disabled={item.quality !== 'second' && (items.find(other => other.slug === item.slug && other.quality === 'second')?.quantity ?? 0) + item.quantity > 999}>Другий сорт</option>
+                  </select>
+                </label>
+              )}
               <p className="text-sm text-muted">{price} грн/{UNIT_LABELS[item.product.unit]}</p>
               {unavailable && <p className="text-sm text-[#8a4b3a]">Немає в наявності — видаліть товар для оформлення</p>}
             </div>
