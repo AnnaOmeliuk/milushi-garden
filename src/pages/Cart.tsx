@@ -110,6 +110,7 @@ export function Cart() {
       pendingId.current = null
       clear()
       setSuccess(true)
+      window.scrollTo({ top: 0, behavior: 'instant' })
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Помилка з’єднання. Спробуйте ще раз.')
     } finally {
