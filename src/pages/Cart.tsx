@@ -171,11 +171,16 @@ export function Cart() {
                 </label>
               )}
               <p className="mt-1 text-sm text-muted">{price} грн/{UNIT_LABELS[item.product.unit]}</p>
+              {unavailable && <p className="text-sm text-[#8a4b3a]">Немає в наявності — видаліть товар для оформлення</p>}
+              </div>
+            </div>
+            <button type="button" className="text-sm text-[#8a4b3a] underline" onClick={() => remove(item.slug, item.quality)}>Видалити</button>
+          </div>
               {pendingQuality?.slug === item.slug && pendingQuality.from === item.quality && (() => {
                 const other = items.find(entry => entry.slug === item.slug && entry.quality === pendingQuality.to)
                 if (!other) return null
                 const combined = Number((item.quantity + other.quantity).toFixed(2))
-                return <div role="alert" className="mt-3 max-w-sm rounded-lg border border-[var(--color-soft-green)] bg-[var(--color-cream)] p-3 text-sm">
+                return <div role="alert" className="mt-4 w-full rounded-lg border border-[var(--color-soft-green)] bg-[var(--color-cream)] p-3 text-sm">
                   <p>У кошику вже є «{QUALITY_LABELS[pendingQuality.to]}». Об’єднати позиції в одну: {combined.toLocaleString('uk-UA')} {UNIT_LABELS[item.product.unit]}?</p>
                   <p className="mt-1 text-muted">Нова вартість: {Number((combined * cartPrice(item.product, pendingQuality.to)).toFixed(2)).toLocaleString('uk-UA')} грн.</p>
                   <div className="mt-3 flex flex-wrap gap-2">
@@ -184,11 +189,6 @@ export function Cart() {
                   </div>
                 </div>
               })()}
-              {unavailable && <p className="text-sm text-[#8a4b3a]">Немає в наявності — видаліть товар для оформлення</p>}
-              </div>
-            </div>
-            <button type="button" className="text-sm text-[#8a4b3a] underline" onClick={() => remove(item.slug, item.quality)}>Видалити</button>
-          </div>
           <div className="mt-4 flex items-center justify-between gap-3">
             <QuantityInput quantity={item.quantity} unit={UNIT_LABELS[item.product.unit]} onUpdate={value => update(item.slug, item.quality, value)} />
             <strong>{Number((price * item.quantity).toFixed(2))} грн</strong>
