@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 import { getProductBySlug, getEffectiveAvailability } from '../data/products'
@@ -15,6 +15,30 @@ function formatPhone(input: string): string {
   return result + ') ' + digits.slice(2, 5) +
     (digits.length > 5 ? '-' + digits.slice(5, 7) : '') +
     (digits.length > 7 ? '-' + digits.slice(7, 9) : '')
+}
+
+function QuantityInput({ quantity, unit, onUpdate }: { quantity: number; unit: string; onUpdate: (value: number) => void }) {
+  const [draft, setDraft] = useState(String(quantity))
+  useEffect(() => { setDraft(String(quantity)) }, [quantity])
+
+  function commit(value: string) {
+    const parsed = Number(value.replace(',', '.'))
+    if (value.trim() !== '' && Number.isFinite(parsed) && parsed >= 1 && parsed <= 999 && Number.isInteger(parsed * 2)) {
+      onUpdate(parsed)
+      setDraft(String(parsed))
+    } else {
+      setDraft(String(quantity))
+    }
+  }
+
+  return <label className="text-sm">Кількість ({unit})
+    <input type="text" inputMode="decimal" value={draft}
+      onChange={event => setDraft(event.target.value)}
+      onBlur={() => commit(draft)}
+      onKeyDown={event => { if (event.key === 'Enter') { event.preventDefault(); commit(draft); event.currentTarget.blur() } }}
+      aria-label={`Кількість (${unit})`}
+      className="ml-2 w-24 rounded-md border px-2 py-2" />
+  </label>
 }
 
 export function Cart() {
@@ -96,12 +120,7 @@ export function Cart() {
             <button type="button" className="text-sm text-[#8a4b3a] underline" onClick={() => remove(item.slug, item.quality)}>Видалити</button>
           </div>
           <div className="mt-4 flex items-center justify-between gap-3">
-            <label className="text-sm">Кількість ({UNIT_LABELS[item.product.unit]})
-              <input type="number" min="1" max="999" step="0.5" value={item.quantity} onChange={event => {
-                const value = Number(event.target.value)
-                if (value >= 1 && value <= 999 && Number.isInteger(value * 2)) update(item.slug, item.quality, value)
-              }} className="ml-2 w-24 rounded-md border px-2 py-2" />
-            </label>
+            <QuantityInput quantity={item.quantity} unit={UNIT_LABELS[item.product.unit]} onUpdate={value => update(item.slug, item.quality, value)} />
             <strong>{Number((price * item.quantity).toFixed(2))} грн</strong>
           </div>
         </div>
