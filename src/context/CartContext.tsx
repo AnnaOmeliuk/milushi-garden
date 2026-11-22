@@ -8,6 +8,7 @@ type CartContextValue = {
   items: CartItem[]
   add: (slug: string, quality: Quality, quantity: number) => void
   update: (slug: string, quality: Quality, quantity: number) => void
+  changeQuality: (slug: string, from: Quality, to: Quality) => void
   remove: (slug: string, quality: Quality) => void
   clear: () => void
 }
@@ -28,9 +29,24 @@ export function CartProvider({ children }: { children: ReactNode }) {
     if (!Number.isFinite(quantity) || quantity < 1 || quantity > 999 || !Number.isInteger(quantity * 2)) return
     setItems(previous => previous.map(item => item.slug === slug && item.quality === quality ? { ...item, quantity } : item))
   }
+  const changeQuality = (slug: string, from: Quality, to: Quality) => {
+    if (from === to) return
+    setItems(previous => {
+      const source = previous.find(item => item.slug === slug && item.quality === from)
+      if (!source) return previous
+      const target = previous.find(item => item.slug === slug && item.quality === to)
+      if (target) {
+        const merged = Number((target.quantity + source.quantity).toFixed(2))
+        if (merged > 999) return previous
+        return previous.filter(item => !(item.slug === slug && item.quality === from)).map(item =>
+          item.slug === slug && item.quality === to ? { ...item, quantity: merged } : item)
+      }
+      return previous.map(item => item.slug === slug && item.quality === from ? { ...item, quality: to } : item)
+    })
+  }
   const remove = (slug: string, quality: Quality) => setItems(previous => previous.filter(item => item.slug !== slug || item.quality !== quality))
   const clear = () => setItems([])
-  return <CartContext.Provider value={{ items, add, update, remove, clear }}>{children}</CartContext.Provider>
+  return <CartContext.Provider value={{ items, add, update, changeQuality, remove, clear }}>{children}</CartContext.Provider>
 }
 export function useCart() {
   const context = useContext(CartContext)
