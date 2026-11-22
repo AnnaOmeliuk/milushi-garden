@@ -30,7 +30,7 @@ export function Cart() {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
   const [phoneTouched, setPhoneTouched] = useState(false)
-  const phoneValid = /^\+380 \(\d{2}\) \d{3}-\d{2}-\d{2}$/.test(phone)
+  const phoneValid = /^\+380 \((?:39|50|63|66|67|68|73|75|77|91|92|93|94|95|96|97|98|99)\) \d{3}-\d{2}-\d{2}$/.test(phone)
   const entries = items.flatMap(item => {
     const product = getProductBySlug(item.slug)
     return product ? [{ ...item, product }] : []
@@ -115,8 +115,8 @@ export function Cart() {
             onBlur={() => setPhoneTouched(true)}
             aria-invalid={phoneTouched && !phoneValid}
             aria-describedby={phoneTouched && !phoneValid ? 'phone-error' : undefined}
-            className="mt-1 block w-full rounded-md border p-3" placeholder="+380 (XX) XXX-XX-XX" />
-          {phoneTouched && !phoneValid && <span id="phone-error" className="mt-1 block text-sm text-[#8a4b3a]">Введіть коректний номер телефону у форматі +380 (XX) XXX-XX-XX</span>}
+            className="mt-1 block w-full rounded-md border p-3" placeholder="+380 (00) 000-00-00" />
+          {phoneTouched && !phoneValid && <span id="phone-error" className="mt-1 block text-sm text-[#8a4b3a]">Введіть коректний мобільний номер України: +380 (00) 000-00-00</span>}
         </label>
         <fieldset className="space-y-2"><legend className="text-sm font-medium">Спосіб отримання *</legend>
           <label className="flex items-center gap-2"><input type="radio" checked={delivery === 'pickup'} onChange={() => { pendingId.current = null; setDelivery('pickup') }} /> Самовивіз із с. Милуші</label>
