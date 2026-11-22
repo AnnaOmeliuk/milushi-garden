@@ -30,7 +30,7 @@ export function Cart() {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
   const [phoneTouched, setPhoneTouched] = useState(false)
-  const phoneValid = /^\+380 \((?:39|50|63|66|67|68|73|75|77|91|92|93|94|95|96|97|98|99)\) \d{3}-\d{2}-\d{2}$/.test(phone)
+  const phoneValid = /^\+380 \([1-9]\\d\) \d{3}-\d{2}-\d{2}$/.test(phone)
   const entries = items.flatMap(item => {
     const product = getProductBySlug(item.slug)
     return product ? [{ ...item, product }] : []
