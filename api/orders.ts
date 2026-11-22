@@ -102,7 +102,7 @@ export default async function handler(req: IncomingMessage & { body?: unknown },
       signal: AbortSignal.timeout(10000),
     })
     if (!response.ok) { console.error('Telegram send failed', response.status); res.writeHead(502).end('Не вдалося надіслати замовлення'); return }
-    recentRequests.set(activeRequestId, Date.now() + 10 * 60_000)
+    recentRequests.set(order.requestId, Date.now() + 10 * 60_000)
     res.writeHead(200, { 'Content-Type': 'application/json' }).end(JSON.stringify({ ok: true }))
   } catch (error) {
     console.error('Order submission failed', error instanceof Error ? error.message : 'unknown')
