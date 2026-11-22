@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 import type { Quality } from '../types/product'
@@ -15,13 +14,19 @@ export function ProductCard({ product, availability }: Props) {
   const status = availability ?? getEffectiveAvailability(product)
   const unavailable = status === 'out_of_stock'
   const { items, add, update, remove } = useCart()
-  const [quality, setQuality] = useState<Quality>('selected')
-  const hasSecondGrade = product.secondGradePricePerKg !== undefined
-  const chosenQuality = hasSecondGrade ? quality : 'selected'
-  const quantity = items.find(item => item.slug === product.slug && item.quality === chosenQuality)?.quantity ?? 0
-  function addToCart() {
+  const qualities: Quality[] = product.secondGradePricePerKg === undefined ? ['selected'] : ['selected', 'second']
+  const quantityFor = (quality: Quality) => items.find(item => item.slug === product.slug && item.quality === quality)?.quantity ?? 0
+  const changeQuantity = (quality: Quality, direction: 'increase' | 'decrease') => {
     if (unavailable) return
-    add(product.slug, chosenQuality, 1)
+    const quantity = quantityFor(quality)
+    if (direction === 'increase') {
+      if (quantity === 0) add(product.slug, quality, 1)
+      else if (quantity < 999) update(product.slug, quality, Math.min(999, Number((quantity + 0.5).toFixed(2))))
+    } else if (quantity <= 1) {
+      remove(product.slug, quality)
+    } else {
+      update(product.slug, quality, Number((quantity - 0.5).toFixed(2)))
+    }
   }
 
   return (
@@ -59,26 +64,34 @@ export function ProductCard({ product, availability }: Props) {
         >
           {getAvailabilityLabel(product, status)}
         </p>
-        {hasSecondGrade && !unavailable && (
-          <label className="mt-2 text-sm text-[var(--color-text)]">Якість
-            <select value={quality} onChange={event => { setQuality(event.target.value as Quality) }}
-              className="mt-1 block min-h-11 w-full rounded-md border border-[var(--color-soft-green)] bg-[var(--color-bg)] px-3">
-              <option value="selected">{QUALITY_LABELS.selected} — {product.pricePerKg} грн/{UNIT_LABELS[product.unit]}</option>
-              <option value="second">{QUALITY_LABELS.second} — {product.secondGradePricePerKg} грн/{UNIT_LABELS[product.unit]}</option>
-            </select>
-          </label>
-        )}
         {unavailable ? (
           <button type="button" disabled className="mt-2 min-h-11 w-full rounded-md bg-[var(--color-green)] px-4 py-2 font-semibold text-[var(--color-bg)] opacity-50">Немає в наявності</button>
-        ) : quantity === 0 ? (
-          <button type="button" onClick={addToCart} className="mt-2 min-h-11 w-full rounded-md bg-[var(--color-green)] px-4 py-2 font-semibold text-[var(--color-bg)] transition hover:bg-[var(--color-leaf)]">У кошик</button>
         ) : (
-          <div className="mt-2 flex min-h-11 items-center justify-between gap-2" role="group" aria-label={`Кількість ${product.name}`}>
-            <button type="button" aria-label="Зменшити кількість" onClick={() => quantity <= 1 ? remove(product.slug, chosenQuality) : update(product.slug, chosenQuality, Number((quantity - 0.5).toFixed(2)))}
-              className="min-h-11 min-w-11 rounded-md border border-[var(--color-green)] text-xl font-semibold text-[var(--color-green)]">−</button>
-            <span className="text-center text-sm font-semibold" aria-live="polite">{quantity.toLocaleString('uk-UA')} {UNIT_LABELS[product.unit]}</span>
-            <button type="button" aria-label="Збільшити кількість" disabled={quantity >= 999} onClick={() => update(product.slug, chosenQuality, Number((quantity + 0.5).toFixed(2)))}
-              className="min-h-11 min-w-11 rounded-md bg-[var(--color-green)] text-xl font-semibold text-[var(--color-bg)] disabled:opacity-50">+</button>
+          <div className="mt-2 space-y-3">
+            {qualities.map(quality => {
+              const quantity = quantityFor(quality)
+              const price = quality === 'second' ? product.secondGradePricePerKg : product.pricePerKg
+              return (
+                <div key={quality} className="rounded-lg border border-[color-mix(in_srgb,var(--color-green)_18%,transparent)] p-3">
+                  <div className="mb-2 flex items-center justify-between gap-2 text-sm">
+                    <span className="font-semibold text-[var(--color-text)]">{qualities.length > 1 ? QUALITY_LABELS[quality] : 'Кількість'}</span>
+                    <span className="text-[var(--color-green)]">{price} грн/{UNIT_LABELS[product.unit]}</span>
+                  </div>
+                  {quantity === 0 ? (
+                    <button type="button" onClick={() => changeQuantity(quality, 'increase')} aria-label={`Додати ${product.name}, ${QUALITY_LABELS[quality]}`}
+                      className="min-h-11 w-full rounded-md bg-[var(--color-green)] px-3 font-semibold text-[var(--color-bg)] hover:bg-[var(--color-leaf)]">У кошик</button>
+                  ) : (
+                    <div className="flex min-h-11 items-center justify-between gap-2" role="group" aria-label={`Кількість ${product.name}, ${QUALITY_LABELS[quality]}`}>
+                      <button type="button" aria-label={`Зменшити кількість: ${QUALITY_LABELS[quality]}`} onClick={() => changeQuantity(quality, 'decrease')}
+                        className="min-h-11 min-w-11 rounded-md border border-[var(--color-green)] text-xl font-semibold text-[var(--color-green)]">−</button>
+                      <span className="text-center text-sm font-semibold" aria-live="polite">{quantity.toLocaleString('uk-UA')} {UNIT_LABELS[product.unit]}</span>
+                      <button type="button" aria-label={`Збільшити кількість: ${QUALITY_LABELS[quality]}`} disabled={quantity >= 999} onClick={() => changeQuantity(quality, 'increase')}
+                        className="min-h-11 min-w-11 rounded-md bg-[var(--color-green)] text-xl font-semibold text-[var(--color-bg)] disabled:opacity-50">+</button>
+                    </div>
+                  )}
+                </div>
+              )
+            })}
           </div>
         )}
       </div>
