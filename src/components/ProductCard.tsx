@@ -14,14 +14,14 @@ type Props = {
 export function ProductCard({ product, availability }: Props) {
   const status = availability ?? getEffectiveAvailability(product)
   const unavailable = status === 'out_of_stock'
-  const { add } = useCart()
+  const { items, add, update, remove } = useCart()
   const [quality, setQuality] = useState<Quality>('selected')
-  const [added, setAdded] = useState(false)
   const hasSecondGrade = product.secondGradePricePerKg !== undefined
+  const chosenQuality = hasSecondGrade ? quality : 'selected'
+  const quantity = items.find(item => item.slug === product.slug && item.quality === chosenQuality)?.quantity ?? 0
   function addToCart() {
     if (unavailable) return
-    add(product.slug, hasSecondGrade ? quality : 'selected', 1)
-    setAdded(true)
+    add(product.slug, chosenQuality, 1)
   }
 
   return (
@@ -61,18 +61,26 @@ export function ProductCard({ product, availability }: Props) {
         </p>
         {hasSecondGrade && !unavailable && (
           <label className="mt-2 text-sm text-[var(--color-text)]">Якість
-            <select value={quality} onChange={event => { setQuality(event.target.value as Quality); setAdded(false) }}
+            <select value={quality} onChange={event => { setQuality(event.target.value as Quality) }}
               className="mt-1 block min-h-11 w-full rounded-md border border-[var(--color-soft-green)] bg-[var(--color-bg)] px-3">
               <option value="selected">{QUALITY_LABELS.selected} — {product.pricePerKg} грн/{UNIT_LABELS[product.unit]}</option>
               <option value="second">{QUALITY_LABELS.second} — {product.secondGradePricePerKg} грн/{UNIT_LABELS[product.unit]}</option>
             </select>
           </label>
         )}
-        <button type="button" disabled={unavailable} onClick={addToCart}
-          className="mt-2 min-h-11 w-full rounded-md bg-[var(--color-green)] px-4 py-2 font-semibold text-[var(--color-bg)] transition hover:bg-[var(--color-leaf)] disabled:cursor-not-allowed disabled:opacity-50">
-          {unavailable ? 'Немає в наявності' : 'У кошик · 1 ' + UNIT_LABELS[product.unit]}
-        </button>
-        <p aria-live="polite" className="min-h-5 text-sm text-[var(--color-green)]">{added ? '✓ Додано до кошика' : ''}</p>
+        {unavailable ? (
+          <button type="button" disabled className="mt-2 min-h-11 w-full rounded-md bg-[var(--color-green)] px-4 py-2 font-semibold text-[var(--color-bg)] opacity-50">Немає в наявності</button>
+        ) : quantity === 0 ? (
+          <button type="button" onClick={addToCart} className="mt-2 min-h-11 w-full rounded-md bg-[var(--color-green)] px-4 py-2 font-semibold text-[var(--color-bg)] transition hover:bg-[var(--color-leaf)]">У кошик</button>
+        ) : (
+          <div className="mt-2 flex min-h-11 items-center justify-between gap-2" role="group" aria-label={`Кількість ${product.name}`}>
+            <button type="button" aria-label="Зменшити кількість" onClick={() => quantity <= 1 ? remove(product.slug, chosenQuality) : update(product.slug, chosenQuality, Number((quantity - 0.5).toFixed(2)))}
+              className="min-h-11 min-w-11 rounded-md border border-[var(--color-green)] text-xl font-semibold text-[var(--color-green)]">−</button>
+            <span className="text-center text-sm font-semibold" aria-live="polite">{quantity.toLocaleString('uk-UA')} {UNIT_LABELS[product.unit]}</span>
+            <button type="button" aria-label="Збільшити кількість" disabled={quantity >= 999} onClick={() => update(product.slug, chosenQuality, Number((quantity + 0.5).toFixed(2)))}
+              className="min-h-11 min-w-11 rounded-md bg-[var(--color-green)] text-xl font-semibold text-[var(--color-bg)] disabled:opacity-50">+</button>
+          </div>
+        )}
       </div>
     </div>
   )
