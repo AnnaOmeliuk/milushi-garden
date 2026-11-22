@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 import { getProductBySlug, getEffectiveAvailability } from '../data/products'
@@ -13,6 +13,8 @@ export function Cart() {
   const [comment, setComment] = useState('')
   const [website, setWebsite] = useState('')
   const [sending, setSending] = useState(false)
+  const pendingId = useRef<string | null>(null)
+  const submitLock = useRef(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
   const entries = items.flatMap(item => {
@@ -25,23 +27,31 @@ export function Cart() {
 
   async function submitOrder(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    if (sending || blocked || !available.length) return
+    if (submitLock.current || sending || blocked || !available.length) return
+    submitLock.current = true
+    pendingId.current ??= crypto.randomUUID()
     setSending(true)
     setError('')
     try {
       const response = await fetch('/api/orders', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, phone, delivery, comment, website, items: items.map(({ slug, quality, quantity }) => ({ slug, quality, quantity })) }),
+        body: JSON.stringify({ requestId: pendingId.current, name, phone, delivery, comment, website, items: items.map(({ slug, quality, quantity }) => ({ slug, quality, quantity })) }),
       })
       if (!response.ok) {
         const text = await response.text()
-        throw new Error(response.status === 404 ? 'API недоступне. Перевірте розгортання на Vercel.' : text || 'Не вдалося надіслати замовлення')
+        let message = 'Не вдалося надіслати замовлення. Спробуйте пізніше.'
+        try { const data = JSON.parse(text) as { message?: string }; if (data.message) message = data.message } catch { /* Do not expose internal server responses */ }
+        if (response.status === 429) message = 'Забагато спроб. Зачекайте хвилину та повторіть.'
+        if (response.status === 404) message = 'Сервіс замовлень тимчасово недоступний.'
+        throw new Error(message)
       }
+      pendingId.current = null
       clear()
       setSuccess(true)
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Помилка з’єднання. Спробуйте ще раз.')
     } finally {
+      submitLock.current = false
       setSending(false)
     }
   }
@@ -81,17 +91,17 @@ export function Cart() {
       <form onSubmit={submitOrder} className="mt-8 space-y-4 rounded-xl border border-[var(--color-soft-green)] p-5">
         <h2 className="text-xl font-semibold text-[var(--color-green)]">Оформлення замовлення</h2>
         <label className="block text-sm font-medium">Ваше ім’я *
-          <input required minLength={2} maxLength={80} autoComplete="name" value={name} onChange={event => setName(event.target.value)} className="mt-1 block w-full rounded-md border p-3" placeholder="Ім’я" />
+          <input required minLength={2} maxLength={80} autoComplete="name" value={name} onChange={event => { pendingId.current = null; setName(event.target.value) }} className="mt-1 block w-full rounded-md border p-3" placeholder="Ім’я" />
         </label>
         <label className="block text-sm font-medium">Телефон *
-          <input required type="tel" autoComplete="tel" pattern="[+]?[0-9 ()\\-]{9,20}" value={phone} onChange={event => setPhone(event.target.value)} className="mt-1 block w-full rounded-md border p-3" placeholder="+380 XX XXX XX XX" />
+          <input required type="tel" autoComplete="tel" pattern="[+]?[0-9 ()\\-]{9,20}" value={phone} onChange={event => { pendingId.current = null; setPhone(event.target.value) }} className="mt-1 block w-full rounded-md border p-3" placeholder="+380 XX XXX XX XX" />
         </label>
         <fieldset className="space-y-2"><legend className="text-sm font-medium">Спосіб отримання *</legend>
-          <label className="flex items-center gap-2"><input type="radio" checked={delivery === 'pickup'} onChange={() => setDelivery('pickup')} /> Самовивіз із с. Милуші</label>
-          <label className="flex items-center gap-2"><input type="radio" checked={delivery === 'lutsk'} onChange={() => setDelivery('lutsk')} /> Доставка до Луцька (від 500 грн, за домовленістю)</label>
+          <label className="flex items-center gap-2"><input type="radio" checked={delivery === 'pickup'} onChange={() => { pendingId.current = null; setDelivery('pickup') }} /> Самовивіз із с. Милуші</label>
+          <label className="flex items-center gap-2"><input type="radio" checked={delivery === 'lutsk'} onChange={() => { pendingId.current = null; setDelivery('lutsk') }} /> Доставка до Луцька (від 500 грн, за домовленістю)</label>
         </fieldset>
         <label className="block text-sm font-medium">Коментар (необов’язково)
-          <textarea maxLength={500} rows={3} value={comment} onChange={event => setComment(event.target.value)} className="mt-1 block w-full rounded-md border p-3" placeholder="Побажання щодо замовлення" />
+          <textarea maxLength={500} rows={3} value={comment} onChange={event => { pendingId.current = null; setComment(event.target.value) }} className="mt-1 block w-full rounded-md border p-3" placeholder="Побажання щодо замовлення" />
         </label>
         <div className="hidden" aria-hidden="true"><label>Website<input tabIndex={-1} autoComplete="off" value={website} onChange={event => setWebsite(event.target.value)} /></label></div>
         {delivery === 'lutsk' && total < 500 && <p className="text-sm text-[#8a4b3a]">Для доставки до Луцька сума замовлення має бути від 500 грн.</p>}
