@@ -41,6 +41,22 @@ function QuantityInput({ quantity, unit, onUpdate }: { quantity: number; unit: s
   </label>
 }
 
+function createRequestId(): string {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID()
+  }
+  if (typeof crypto !== 'undefined' && typeof crypto.getRandomValues === 'function') {
+    const bytes = new Uint8Array(16)
+    crypto.getRandomValues(bytes)
+    bytes[6] = (bytes[6] & 0x0f) | 0x40
+    bytes[8] = (bytes[8] & 0x3f) | 0x80
+    const hex = Array.from(bytes, byte => byte.toString(16).padStart(2, '0')).join('')
+    return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`
+  }
+  // Non-cryptographic fallback for older or insecure browser contexts.
+  return `order-${Date.now()}-${Math.random().toString(36).slice(2)}`
+}
+
 export function Cart() {
   const { items, update, remove, clear } = useCart()
   const [name, setName] = useState('')
@@ -78,7 +94,7 @@ export function Cart() {
     setSending(true)
     setError('')
     try {
-      pendingId.current ??= crypto.randomUUID()
+      pendingId.current ??= createRequestId()
       const response = await fetch('/api/orders', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ requestId: pendingId.current, name, phone, delivery, comment, website, items: items.map(({ slug, quality, quantity }) => ({ slug, quality, quantity })) }),
