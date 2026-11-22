@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 import { getProductBySlug, getEffectiveAvailability } from '../data/products'
 import { cartPrice } from '../lib/cart'
-import { UNIT_LABELS } from '../types/product'
+import { QUALITY_LABELS, UNIT_LABELS } from '../types/product'
+import type { Quality } from '../types/product'
 
 function formatPhone(input: string): string {
   let digits = input.replace(/\D/g, '')
@@ -69,6 +70,7 @@ export function Cart() {
   const submitLock = useRef(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
+  const [pendingQuality, setPendingQuality] = useState<{ slug: string; from: Quality; to: Quality } | null>(null)
   const [phoneTouched, setPhoneTouched] = useState(false)
   const [nameTouched, setNameTouched] = useState(false)
   const nameValid = /^[\p{L}]+(?:[\p{L} '\u2019-]*[\p{L}])?$/u.test(name.trim()) && name.trim().length >= 2 && name.trim().length <= 80
@@ -80,6 +82,27 @@ export function Cart() {
   const available = entries.filter(item => getEffectiveAvailability(item.product) !== 'out_of_stock')
   const blocked = entries.length !== available.length
   const total = available.reduce((sum, item) => sum + cartPrice(item.product, item.quality) * item.quantity, 0)
+
+  function requestQualityChange(slug: string, from: Quality, to: Quality) {
+    if (from === to) return
+    const source = items.find(item => item.slug === slug && item.quality === from)
+    const existing = items.find(item => item.slug === slug && item.quality === to)
+    if (!source) return
+    if (existing) {
+      if (source.quantity + existing.quantity > 999) return
+      setPendingQuality({ slug, from, to })
+      return
+    }
+    pendingId.current = null
+    changeQuality(slug, from, to)
+  }
+
+  function confirmQualityChange() {
+    if (!pendingQuality) return
+    pendingId.current = null
+    changeQuality(pendingQuality.slug, pendingQuality.from, pendingQuality.to)
+    setPendingQuality(null)
+  }
 
   async function submitOrder(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -135,7 +158,7 @@ export function Cart() {
               {item.product.secondGradePricePerKg !== undefined && (
                 <label className="mt-2 block text-sm text-muted">Якість
                   <select value={item.quality}
-                    onChange={event => { pendingId.current = null; changeQuality(item.slug, item.quality, event.target.value as 'selected' | 'second') }}
+                    onChange={event => requestQualityChange(item.slug, item.quality, event.target.value as Quality)}
                     className="mt-1 block min-h-11 rounded-md border border-[var(--color-soft-green)] bg-[var(--color-bg)] px-3 text-[var(--color-text)]"
                     aria-label={`Якість: ${item.product.name}`}>
                     <option value="selected" disabled={item.quality !== 'selected' && (items.find(other => other.slug === item.slug && other.quality === 'selected')?.quantity ?? 0) + item.quantity > 999}>Відбірні</option>
@@ -143,7 +166,20 @@ export function Cart() {
                   </select>
                 </label>
               )}
-              <p className="text-sm text-muted">{price} грн/{UNIT_LABELS[item.product.unit]}</p>
+              <p className="mt-1 text-sm text-muted">{price} грн/{UNIT_LABELS[item.product.unit]}</p>
+              {pendingQuality?.slug === item.slug && pendingQuality.from === item.quality && (() => {
+                const other = items.find(entry => entry.slug === item.slug && entry.quality === pendingQuality.to)
+                if (!other) return null
+                const combined = Number((item.quantity + other.quantity).toFixed(2))
+                return <div role="alert" className="mt-3 max-w-sm rounded-lg border border-[var(--color-soft-green)] bg-[var(--color-cream)] p-3 text-sm">
+                  <p>У кошику вже є «{QUALITY_LABELS[pendingQuality.to]}». Об’єднати позиції в одну: {combined.toLocaleString('uk-UA')} {UNIT_LABELS[item.product.unit]}?</p>
+                  <p className="mt-1 text-muted">Нова вартість: {Number((combined * cartPrice(item.product, pendingQuality.to)).toFixed(2)).toLocaleString('uk-UA')} грн.</p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <button type="button" onClick={confirmQualityChange} className="min-h-11 rounded-md bg-[var(--color-green)] px-4 font-semibold text-[var(--color-bg)]">Об’єднати</button>
+                    <button type="button" onClick={() => setPendingQuality(null)} className="min-h-11 rounded-md border border-[var(--color-soft-green)] px-4">Скасувати</button>
+                  </div>
+                </div>
+              })()}
               {unavailable && <p className="text-sm text-[#8a4b3a]">Немає в наявності — видаліть товар для оформлення</p>}
             </div>
             <button type="button" className="text-sm text-[#8a4b3a] underline" onClick={() => remove(item.slug, item.quality)}>Видалити</button>
