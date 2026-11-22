@@ -5,10 +5,22 @@ import { getProductBySlug, getEffectiveAvailability } from '../data/products'
 import { cartPrice } from '../lib/cart'
 import { QUALITY_LABELS, UNIT_LABELS } from '../types/product'
 
+function formatPhone(input: string): string {
+  let digits = input.replace(/\D/g, '')
+  if (digits.startsWith('380')) digits = digits.slice(3)
+  else if (digits.startsWith('0')) digits = digits.slice(1)
+  digits = digits.slice(0, 9)
+  const result = '+380' + (digits.length ? ' (' + digits.slice(0, 2) : '')
+  if (digits.length <= 2) return result
+  return result + ') ' + digits.slice(2, 5) +
+    (digits.length > 5 ? '-' + digits.slice(5, 7) : '') +
+    (digits.length > 7 ? '-' + digits.slice(7, 9) : '')
+}
+
 export function Cart() {
   const { items, update, remove, clear } = useCart()
   const [name, setName] = useState('')
-  const [phone, setPhone] = useState('')
+  const [phone, setPhone] = useState('+380')
   const [delivery, setDelivery] = useState<'pickup' | 'lutsk'>('pickup')
   const [comment, setComment] = useState('')
   const [website, setWebsite] = useState('')
@@ -17,6 +29,8 @@ export function Cart() {
   const submitLock = useRef(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
+  const [phoneTouched, setPhoneTouched] = useState(false)
+  const phoneValid = /^\+380 \(\d{2}\) \d{3}-\d{2}-\d{2}$/.test(phone)
   const entries = items.flatMap(item => {
     const product = getProductBySlug(item.slug)
     return product ? [{ ...item, product }] : []
@@ -28,6 +42,8 @@ export function Cart() {
   async function submitOrder(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
     if (submitLock.current || sending || blocked || !available.length) return
+    setPhoneTouched(true)
+    if (!phoneValid) { setError('Введіть коректний номер телефону'); return }
     submitLock.current = true
     pendingId.current ??= crypto.randomUUID()
     setSending(true)
@@ -94,7 +110,13 @@ export function Cart() {
           <input required minLength={2} maxLength={80} autoComplete="name" value={name} onChange={event => { pendingId.current = null; setName(event.target.value) }} className="mt-1 block w-full rounded-md border p-3" placeholder="Ім’я" />
         </label>
         <label className="block text-sm font-medium">Телефон *
-          <input required type="tel" autoComplete="tel" pattern="[+]?[0-9 ()\\-]{9,20}" value={phone} onChange={event => { pendingId.current = null; setPhone(event.target.value) }} className="mt-1 block w-full rounded-md border p-3" placeholder="+380 XX XXX XX XX" />
+          <input required type="tel" inputMode="numeric" autoComplete="tel" value={phone}
+            onChange={event => { pendingId.current = null; setPhone(formatPhone(event.target.value)); setError('') }}
+            onBlur={() => setPhoneTouched(true)}
+            aria-invalid={phoneTouched && !phoneValid}
+            aria-describedby={phoneTouched && !phoneValid ? 'phone-error' : undefined}
+            className="mt-1 block w-full rounded-md border p-3" placeholder="+380 (XX) XXX-XX-XX" />
+          {phoneTouched && !phoneValid && <span id="phone-error" className="mt-1 block text-sm text-[#8a4b3a]">Введіть коректний номер телефону у форматі +380 (XX) XXX-XX-XX</span>}
         </label>
         <fieldset className="space-y-2"><legend className="text-sm font-medium">Спосіб отримання *</legend>
           <label className="flex items-center gap-2"><input type="radio" checked={delivery === 'pickup'} onChange={() => { pendingId.current = null; setDelivery('pickup') }} /> Самовивіз із с. Милуші</label>
@@ -106,7 +128,7 @@ export function Cart() {
         <div className="hidden" aria-hidden="true"><label>Website<input tabIndex={-1} autoComplete="off" value={website} onChange={event => setWebsite(event.target.value)} /></label></div>
         {delivery === 'lutsk' && total < 500 && <p className="text-sm text-[#8a4b3a]">Для доставки до Луцька сума замовлення має бути від 500 грн.</p>}
         {error && <p role="alert" className="text-sm text-[#8a4b3a]">{error}</p>}
-        <button type="submit" disabled={sending || blocked || !available.length || (delivery === 'lutsk' && total < 500)} className="min-h-11 w-full rounded-md bg-[var(--color-green)] px-5 py-3 font-semibold text-[var(--color-bg)] disabled:opacity-50">{sending ? 'Надсилаємо…' : 'Підтвердити замовлення'}</button>
+        <button type="submit" disabled={sending || blocked || !available.length || !phoneValid || (delivery === 'lutsk' && total < 500)} className="min-h-11 w-full rounded-md bg-[var(--color-green)] px-5 py-3 font-semibold text-[var(--color-bg)] disabled:opacity-50">{sending ? 'Надсилаємо…' : 'Підтвердити замовлення'}</button>
         <p className="text-sm text-muted">Оплата при отриманні. Після відправлення ми зв’яжемося з вами для підтвердження деталей.</p>
       </form>
       <div className="mt-6 flex justify-between"><Link to="/catalog" className="text-[var(--color-green)] underline">Продовжити покупки</Link><button type="button" className="text-sm text-muted underline" onClick={clear}>Очистити кошик</button></div>
