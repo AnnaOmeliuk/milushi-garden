@@ -4,23 +4,53 @@ import { QUALITY_LABELS, UNIT_LABELS } from '../src/types/product.js'
 import type { Quality } from '../src/types/product.js'
 
 type Item = { slug: string; quality: Quality; quantity: number }
-type Order = { name: string; phone: string; delivery: 'pickup' | 'lutsk'; comment?: string; items: Item[]; website?: string }
+type Order = { requestId?: string; name: string; phone: string; delivery: 'pickup' | 'lutsk'; comment?: string; items: Item[]; website?: string }
+
+const MAX_BODY_BYTES = 12_000
+const recentRequests = new Map<string, number>()
+const inFlight = new Set<string>()
+
+function sendError(res: ServerResponse, status: number, message: string) {
+  res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8' })
+  res.end(JSON.stringify({ ok: false, message }))
+}
 
 export default async function handler(req: IncomingMessage & { body?: unknown }, res: ServerResponse) {
   res.setHeader('Cache-Control', 'no-store')
   if (req.method !== 'POST') { res.setHeader('Allow', 'POST'); res.writeHead(405).end('Method not allowed'); return }
+  let activeRequestId: string | undefined
   try {
+    const length = Number(req.headers['content-length'])
+    if (Number.isFinite(length) && length > MAX_BODY_BYTES) {
+      sendError(res, 413, 'Замовлення завелике'); return
+    }
     let raw: unknown = req.body
     if (raw === undefined) {
       let data = ''
       for await (const chunk of req) {
         data += String(chunk)
-        if (data.length > 20000) { res.writeHead(413).end('Request too large'); return }
+        if (Buffer.byteLength(data, 'utf8') > MAX_BODY_BYTES) { sendError(res, 413, 'Замовлення завелике'); return }
       }
       raw = JSON.parse(data)
     }
+    if (raw !== undefined && Buffer.byteLength(JSON.stringify(raw), 'utf8') > MAX_BODY_BYTES) {
+      sendError(res, 413, 'Замовлення завелике'); return
+    }
     if (!raw || typeof raw !== 'object' || Array.isArray(raw)) { res.writeHead(400).end('Invalid order'); return }
     const order = raw as Order
+    if (typeof order.requestId !== 'string' || !/^[0-9a-f-]{36}$/i.test(order.requestId)) {
+      sendError(res, 400, 'Оновіть сторінку й повторіть замовлення'); return
+    }
+    // Best-effort duplicate protection per warm function instance; shared storage
+    // is required to guarantee idempotency across Vercel instances.
+    const now = Date.now()
+    for (const [key, expiry] of recentRequests) if (expiry <= now) recentRequests.delete(key)
+    if (recentRequests.has(order.requestId)) {
+      res.writeHead(200, { 'Content-Type': 'application/json' }).end(JSON.stringify({ ok: true, duplicate: true })); return
+    }
+    if (inFlight.has(order.requestId)) {
+      sendError(res, 409, 'Замовлення вже надсилається. Зачекайте'); return
+    }
     // Honeypot for basic spam filtering.
     if (order.website) { res.writeHead(200, { 'Content-Type': 'application/json' }).end(JSON.stringify({ ok: true })); return }
     const name = typeof order.name === 'string' ? order.name.trim() : ''
@@ -64,15 +94,20 @@ export default async function handler(req: IncomingMessage & { body?: unknown },
       ...(comment ? [`Коментар: ${comment}`] : []),
       '', 'Підтвердіть наявність, час та умови отримання з покупцем.'
     ].join('\n')
+    activeRequestId = order.requestId
+    inFlight.add(activeRequestId)
     const response = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ chat_id: chatId, text: message }),
       signal: AbortSignal.timeout(10000),
     })
     if (!response.ok) { console.error('Telegram send failed', response.status); res.writeHead(502).end('Не вдалося надіслати замовлення'); return }
+    recentRequests.set(activeRequestId, Date.now() + 10 * 60_000)
     res.writeHead(200, { 'Content-Type': 'application/json' }).end(JSON.stringify({ ok: true }))
   } catch (error) {
     console.error('Order submission failed', error instanceof Error ? error.message : 'unknown')
-    res.writeHead(500).end('Не вдалося обробити замовлення')
+    sendError(res, 500, 'Не вдалося обробити замовлення. Спробуйте пізніше')
+  } finally {
+    if (activeRequestId) inFlight.delete(activeRequestId)
   }
 }
