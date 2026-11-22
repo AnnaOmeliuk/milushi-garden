@@ -1,7 +1,7 @@
 import type { IncomingMessage, ServerResponse } from 'node:http'
-import { getEffectiveAvailability, getProductBySlug } from '../src/data/products'
-import { QUALITY_LABELS, UNIT_LABELS } from '../src/types/product'
-import type { Quality } from '../src/types/product'
+import { getEffectiveAvailability, getProductBySlug } from '../src/data/products.js'
+import { QUALITY_LABELS, UNIT_LABELS } from '../src/types/product.js'
+import type { Quality } from '../src/types/product.js'
 
 type Item = { slug: string; quality: Quality; quantity: number }
 type Order = { name: string; phone: string; delivery: 'pickup' | 'lutsk'; comment?: string; items: Item[]; website?: string }
