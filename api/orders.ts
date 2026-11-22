@@ -56,7 +56,7 @@ export default async function handler(req: IncomingMessage & { body?: unknown },
     const name = typeof order.name === 'string' ? order.name.trim() : ''
     const phone = typeof order.phone === 'string' ? order.phone.trim() : ''
     const comment = typeof order.comment === 'string' ? order.comment.trim() : ''
-    if (name.length < 2 || name.length > 80 || !/^\+380 \([1-9]\\d\) \d{3}-\d{2}-\d{2}$/.test(phone) ||
+    if ((name.length < 2 || name.length > 80 || !/^[\p{L}]+(?:[\p{L} '\u2019-]*[\p{L}])?$/u.test(name)) || !/^\+380 \([1-9]\d\) \d{3}-\d{2}-\d{2}$/.test(phone) ||
       comment.length > 500 || !['pickup', 'lutsk'].includes(order.delivery) ||
       !Array.isArray(order.items) || order.items.length < 1 || order.items.length > 30) {
       sendError(res, 400, 'Перевірте дані замовлення, зокрема мобільний номер'); return
