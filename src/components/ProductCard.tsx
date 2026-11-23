@@ -85,7 +85,10 @@ export function ProductCard({ product, availability }: Props) {
           <div className="mt-2 flex min-h-11 items-center justify-between gap-2" role="group" aria-label={`Кількість ${product.name}, ${QUALITY_LABELS[chosenQuality]}`}>
             <button type="button" aria-label="Зменшити кількість" onClick={() => changeQuantity('decrease')}
               className="min-h-11 min-w-11 rounded-md border border-[var(--color-green)] text-xl font-semibold text-[var(--color-green)]">−</button>
-            <span className="text-center text-sm font-semibold" aria-live="polite">{quantity.toLocaleString('uk-UA')} {UNIT_LABELS[product.unit]}</span>
+            <div className="flex flex-1 flex-col items-center text-center">
+              <span className="text-sm font-semibold" aria-live="polite">{quantity.toLocaleString('uk-UA')} {UNIT_LABELS[product.unit]}</span>
+              <span className="text-xs text-muted">У кошику</span>
+            </div>
             <button type="button" aria-label="Збільшити кількість" disabled={quantity >= 999} onClick={() => changeQuantity('increase')}
               className="min-h-11 min-w-11 rounded-md bg-[var(--color-green)] text-xl font-semibold text-[var(--color-bg)] disabled:opacity-50">+</button>
           </div>
