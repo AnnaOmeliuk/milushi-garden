@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { getEffectiveAvailability, getProductBySlug } from '../data/products'
 import {
-  buildOrderMessage,
   phoneOrderUrl,
   viberOrderUrl,
 } from '../lib/order'
 import { CATEGORY_LABELS, UNIT_LABELS, QUALITY_LABELS, getAvailabilityLabel } from '../types/product'
 import type { Quality } from '../types/product'
 import { useCart } from '../context/CartContext'
+import { ContactIcon } from '../components/ContactIcon'
 import { FavoriteButton } from '../components/FavoriteButton'
 
 export function Product() {
@@ -38,7 +38,7 @@ export function Product() {
   const weightKg = quantity || 1
   const pricePerUnit = chosenQuality === 'second' ? product.secondGradePricePerKg! : product.pricePerKg
   const total = Number((weightKg * pricePerUnit).toFixed(2))
-  const message = buildOrderMessage({ product, weightKg, quality: chosenQuality })
+  const message = `Вітаю! Маю запитання щодо товару: ${product.name}.`
   const changeQuantity = (direction: 'increase' | 'decrease') => {
     if (unavailable) return
     if (direction === 'increase') {
@@ -178,21 +178,17 @@ export function Product() {
                       <button type="button" aria-label="Збільшити кількість" disabled={quantity >= 999} onClick={() => changeQuantity('increase')} className="min-h-11 min-w-11 rounded-md bg-[var(--color-green)] text-xl font-semibold text-[var(--color-bg)] disabled:opacity-50">+</button>
                     </div>
                   )}
-                  <a
-                    href={viberOrderUrl(message)}
-                    className={`inline-flex flex-1 items-center justify-center rounded-md bg-[var(--color-leaf)] px-5 py-3 text-sm font-semibold text-[var(--color-bg)] transition hover:brightness-110`}
-                  >
-                    Замовити у Viber
-                  </a>
-                  <a
-                    href={phoneOrderUrl()}
-                    className="inline-flex flex-1 items-center justify-center rounded-md border border-[var(--color-green)] px-5 py-3 text-sm font-semibold text-[var(--color-green)] transition hover:bg-[color-mix(in_srgb,var(--color-soft-green)_25%,transparent)]"
-                  >
-                    Зателефонувати
-                  </a>
+
                 </div>
               )}
               {quantity > 0 && !unavailable && <Link to="/cart" className="inline-block text-sm font-semibold text-[var(--color-green)] underline">Перейти до кошика</Link>}
+              <div className="border-t border-[color-mix(in_srgb,var(--color-green)_14%,transparent)] pt-4">
+                <p className="text-sm font-semibold">Маєте запитання щодо товару?</p>
+                <div className="mt-2 flex flex-wrap gap-x-5 gap-y-2 text-sm">
+                  <a href={viberOrderUrl(message)} className="inline-flex min-h-11 items-center gap-2 text-[#7360a9] hover:underline"><ContactIcon name="viber" />Написати нам у Viber</a>
+                  {!unavailable && <a href={phoneOrderUrl()} className="inline-flex min-h-11 items-center gap-2 text-[var(--color-green)] hover:underline"><ContactIcon name="phone" />Зателефонувати</a>}
+                </div>
+              </div>
             </div>
 
             <div className="mt-8">
