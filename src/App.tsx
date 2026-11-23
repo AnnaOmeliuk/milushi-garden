@@ -5,6 +5,8 @@ import { Header } from './components/Header'
 import { Catalog } from './pages/Catalog'
 import { Cart } from './pages/Cart'
 import { CartProvider } from './context/CartContext'
+import { FavoritesProvider } from './context/FavoritesContext'
+import { Favorites } from './pages/Favorites'
 import { Home } from './pages/Home'
 import { Product } from './pages/Product'
 
@@ -56,6 +58,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <CartProvider>
+      <FavoritesProvider>
       <ScrollToTop />
       <div className="flex min-h-screen flex-col">
         <Header />
@@ -64,6 +67,7 @@ export default function App() {
             <Route path="/" element={<Home />} />
             <Route path="/catalog" element={<Catalog />} />
             <Route path="/cart" element={<Cart />} />
+            <Route path="/favorites" element={<Favorites />} />
             <Route path="/product/:slug" element={<Product />} />
             <Route path="*" element={<Home />} />
           </Routes>
@@ -71,6 +75,7 @@ export default function App() {
         <Footer />
         <ScrollUpButton />
       </div>
+      </FavoritesProvider>
       </CartProvider>
     </BrowserRouter>
   )
