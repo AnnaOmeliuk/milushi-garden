@@ -70,6 +70,7 @@ export function Cart() {
   const submitLock = useRef(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
+  const [confirmClear, setConfirmClear] = useState(false)
   const [pendingQuality, setPendingQuality] = useState<{ slug: string; from: Quality; to: Quality } | null>(null)
   const [phoneTouched, setPhoneTouched] = useState(false)
   const [nameTouched, setNameTouched] = useState(false)
@@ -143,7 +144,17 @@ export function Cart() {
   }
 
   return <div className="section-pad"><div className="container-page max-w-3xl">
-    <h1 className="font-display text-4xl text-[var(--color-green)]">Кошик</h1>
+    <div className="flex flex-wrap items-center justify-between gap-3">
+      <h1 className="font-display text-4xl text-[var(--color-green)]">Кошик</h1>
+      {!success && entries.length > 0 && <button type="button" disabled={sending} className="inline-flex min-h-11 items-center gap-2 text-sm text-[#8a4b3a] hover:underline disabled:opacity-50" onClick={() => setConfirmClear(true)}><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5"><path d="M3 6h18M9 6V4h6v2M5 6l1 14h12l1-14M10 10v6M14 10v6" /></svg>Очистити кошик</button>}
+    </div>
+    {confirmClear && !success && entries.length > 0 && <div role="group" aria-label="Підтвердження очищення кошика" className="mt-4 rounded-lg border border-[var(--color-soft-green)] bg-[var(--color-cream)] p-4">
+      <p className="text-sm">Видалити всі товари з кошика?</p>
+      <div className="mt-3 flex flex-wrap gap-2">
+        <button type="button" disabled={sending} onClick={() => { clear(); pendingId.current = null; setPendingQuality(null); setConfirmClear(false); setError('') }} className="min-h-11 rounded-md bg-[#8a4b3a] px-4 font-semibold text-white disabled:opacity-50">Очистити</button>
+        <button type="button" onClick={() => setConfirmClear(false)} className="min-h-11 rounded-md border border-[var(--color-soft-green)] px-4">Скасувати</button>
+      </div>
+    </div>}
     {success ? <div role="status" className="mt-8 space-y-4">
       <h2 className="text-xl font-semibold text-[var(--color-green)]">Замовлення надіслано! 🌿</h2>
       <p>Дякуємо! Ми зв’яжемося з вами, щоб підтвердити наявність і домовитися про отримання.</p>
@@ -174,7 +185,7 @@ export function Cart() {
               {unavailable && <p className="text-sm text-[#8a4b3a]">Немає в наявності — видаліть товар для оформлення</p>}
               </div>
             </div>
-            <button type="button" className="text-sm text-[#8a4b3a] underline" onClick={() => remove(item.slug, item.quality)}>Видалити</button>
+            <button type="button" aria-label={`Видалити ${item.product.name}, ${QUALITY_LABELS[item.quality]}`} title="Видалити товар" disabled={sending} className="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-md text-[#8a4b3a] hover:bg-[var(--color-cream)] disabled:opacity-50" onClick={() => { remove(item.slug, item.quality); pendingId.current = null; setPendingQuality(null); setConfirmClear(false) }}><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5"><path d="M3 6h18M9 6V4h6v2M5 6l1 14h12l1-14M10 10v6M14 10v6" /></svg></button>
           </div>
               {pendingQuality?.slug === item.slug && pendingQuality.from === item.quality && (() => {
                 const other = items.find(entry => entry.slug === item.slug && entry.quality === pendingQuality.to)
@@ -225,7 +236,7 @@ export function Cart() {
         <button type="submit" disabled={sending || blocked || !available.length || (delivery === 'lutsk' && total < 500)} className="min-h-11 w-full rounded-md bg-[var(--color-green)] px-5 py-3 font-semibold text-[var(--color-bg)] disabled:opacity-50">{sending ? 'Надсилаємо…' : 'Підтвердити замовлення'}</button>
         <p className="text-sm text-muted">Оплата при отриманні. Після відправлення ми зв’яжемося з вами для підтвердження деталей.</p>
       </form>
-      <div className="mt-6 flex justify-between"><Link to="/catalog" className="text-[var(--color-green)] underline">Продовжити покупки</Link><button type="button" className="text-sm text-muted underline" onClick={clear}>Очистити кошик</button></div>
+      <div className="mt-6 flex justify-between"><Link to="/catalog" className="text-[var(--color-green)] underline">Продовжити покупки</Link></div>
     </>}
   </div></div>
 }
