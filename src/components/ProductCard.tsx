@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
+import { FavoriteButton } from './FavoriteButton'
 import type { Quality } from '../types/product'
 import type { Availability, Product } from '../types/product'
 import { CATEGORY_LABELS, UNIT_LABELS, QUALITY_LABELS, getAvailabilityLabel } from '../types/product'
@@ -33,7 +34,7 @@ export function ProductCard({ product, availability }: Props) {
 
   return (
     <div
-      className="group flex flex-col overflow-hidden rounded-xl border border-[color-mix(in_srgb,var(--color-green)_14%,transparent)] bg-[color-mix(in_srgb,var(--color-bg)_80%,white)] shadow-[0_10px_30px_-24px_rgba(48,53,45,0.55)] transition duration-300 hover:-translate-y-1 hover:border-[color-mix(in_srgb,var(--color-green)_35%,transparent)] hover:shadow-[0_18px_36px_-22px_rgba(48,53,45,0.45)]"
+      className="group relative flex flex-col overflow-hidden rounded-xl border border-[color-mix(in_srgb,var(--color-green)_14%,transparent)] bg-[color-mix(in_srgb,var(--color-bg)_80%,white)] shadow-[0_10px_30px_-24px_rgba(48,53,45,0.55)] transition duration-300 hover:-translate-y-1 hover:border-[color-mix(in_srgb,var(--color-green)_35%,transparent)] hover:shadow-[0_18px_36px_-22px_rgba(48,53,45,0.45)]"
     >
       <Link to={`/product/${product.slug}`} className="relative block aspect-[3/2] overflow-hidden bg-[var(--color-cream)]" aria-label={`Переглянути ${product.name}`}>
         <img
@@ -46,6 +47,7 @@ export function ProductCard({ product, availability }: Props) {
           {CATEGORY_LABELS[product.category]}
         </span>
       </Link>
+      <FavoriteButton slug={product.slug} name={product.name} className="absolute right-3 top-3 z-10" />
 
       <div className="flex flex-1 flex-col gap-2 p-3 sm:p-4">
         <div className="flex items-start justify-between gap-3">
