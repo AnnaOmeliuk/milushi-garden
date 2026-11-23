@@ -67,7 +67,7 @@ export function Home() {
           </div>
           <div className="mt-6 grid gap-5 sm:mt-8 sm:grid-cols-2 lg:grid-cols-3">
             {featured.map((product, index) => (
-              <div key={product.slug} className={index >= 4 ? 'hidden sm:block' : ''}>
+              <div key={product.slug} className={index >= 4 ? 'hidden sm:block sm:h-full' : 'h-full'}>
                 <ProductCard product={product} />
               </div>
             ))}
