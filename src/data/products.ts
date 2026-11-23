@@ -96,6 +96,23 @@ export function getEffectiveAvailability(product: Product): Availability {
 }
 
 export function getFeaturedProducts(): Product[] {
-  return products.filter((product) => product.featured)
+  const featured = products.filter(product => product.featured && getEffectiveAvailability(product) !== 'out_of_stock')
+  const groups = new Map<Product['category'], Product[]>()
+  for (const product of featured) {
+    const group = groups.get(product.category) ?? []
+    group.push(product)
+    groups.set(product.category, group)
+  }
+
+  // Rotate categories first, then fill the remaining slots with other featured items.
+  const selected: Product[] = []
+  while (selected.length < 6 && [...groups.values()].some(group => group.length > 0)) {
+    for (const group of groups.values()) {
+      const product = group.shift()
+      if (product) selected.push(product)
+      if (selected.length === 6) break
+    }
+  }
+  return selected
 }
 
