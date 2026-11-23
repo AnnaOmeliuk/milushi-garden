@@ -9,6 +9,7 @@ import {
 import { CATEGORY_LABELS, UNIT_LABELS, QUALITY_LABELS, getAvailabilityLabel } from '../types/product'
 import type { Quality } from '../types/product'
 import { useCart } from '../context/CartContext'
+import { FavoriteButton } from '../components/FavoriteButton'
 
 export function Product() {
   const { slug = '' } = useParams()
@@ -91,7 +92,7 @@ export function Product() {
             <p className="text-sm font-semibold uppercase tracking-[0.12em] text-[var(--color-soft-green)]">
               {CATEGORY_LABELS[product.category]}
             </p>
-            <h1 className="mt-2 font-display text-4xl text-[var(--color-green)] sm:text-5xl">{product.name}</h1>
+            <div className="mt-2 flex items-start justify-between gap-3"><h1 className="font-display text-4xl text-[var(--color-green)] sm:text-5xl">{product.name}</h1><FavoriteButton slug={product.slug} name={product.name} className="shrink-0" /></div>
             <p className="mt-3 text-lg text-muted">{product.shortDescription}</p>
             <p className="mt-5 font-display text-3xl text-[var(--color-text)]">
               {product.unit === 'kg' && quality === 'second' ? (product.secondGradePricePerKg === undefined ? 'Ціна уточнюється' : `${product.secondGradePricePerKg} грн`) : `${product.pricePerKg} грн`}
