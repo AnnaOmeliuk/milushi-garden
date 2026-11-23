@@ -13,20 +13,16 @@ import { FavoriteButton } from '../components/FavoriteButton'
 
 export function Product() {
   const { slug = '' } = useParams()
-  const { add } = useCart()
-  const [added, setAdded] = useState(false)
+  const { items, add, update, remove } = useCart()
   const product = getProductBySlug(slug)
 
   const [imageIndex, setImageIndex] = useState(0)
   const [quality, setQuality] = useState<Quality>('selected')
-  const [weight, setWeight] = useState('5')
 
   useEffect(() => {
     if (!product) return
-    setAdded(false)
     setImageIndex(0)
     setQuality('selected')
-    setWeight(product.unit === 'kg' ? '5' : '1')
   }, [product])
 
   if (!product) {
@@ -36,11 +32,24 @@ export function Product() {
   const availability = getEffectiveAvailability(product)
   const unavailable = availability === 'out_of_stock'
   const isPreorder = !unavailable && Boolean(product.preorder)
-  const weightKg = Number(weight)
-  const validWeight = weight.trim() !== '' && Number.isFinite(weightKg) && weightKg >= 1 && weightKg <= 999 && Number.isInteger(weightKg * 2)
-  const pricePerUnit = product.unit === 'kg' && quality === 'second' ? product.secondGradePricePerKg : product.pricePerKg
-  const total = validWeight && pricePerUnit !== undefined ? Number((weightKg * pricePerUnit).toFixed(2)) : undefined
-  const message = validWeight ? buildOrderMessage({ product, weightKg, quality: product.category === 'fruits' ? quality : 'selected' }) : ''
+  const hasSecondGrade = product.secondGradePricePerKg !== undefined
+  const chosenQuality = hasSecondGrade ? quality : 'selected'
+  const quantity = items.find(item => item.slug === product.slug && item.quality === chosenQuality)?.quantity ?? 0
+  const weightKg = quantity || 1
+  const pricePerUnit = chosenQuality === 'second' ? product.secondGradePricePerKg! : product.pricePerKg
+  const total = Number((weightKg * pricePerUnit).toFixed(2))
+  const message = buildOrderMessage({ product, weightKg, quality: chosenQuality })
+  const changeQuantity = (direction: 'increase' | 'decrease') => {
+    if (unavailable) return
+    if (direction === 'increase') {
+      if (quantity === 0) add(product.slug, chosenQuality, 1)
+      else if (quantity < 999) update(product.slug, chosenQuality, Math.min(999, quantity + 0.5))
+    } else if (quantity <= 1) {
+      remove(product.slug, chosenQuality)
+    } else {
+      update(product.slug, chosenQuality, quantity - 0.5)
+    }
+  }
 
 
   return (
@@ -95,8 +104,8 @@ export function Product() {
             <div className="mt-2 flex items-start justify-between gap-3"><h1 className="font-display text-4xl text-[var(--color-green)] sm:text-5xl">{product.name}</h1><FavoriteButton slug={product.slug} name={product.name} className="shrink-0" /></div>
             <p className="mt-3 text-lg text-muted">{product.shortDescription}</p>
             <p className="mt-5 font-display text-3xl text-[var(--color-text)]">
-              {product.unit === 'kg' && quality === 'second' ? (product.secondGradePricePerKg === undefined ? 'Ціна уточнюється' : `${product.secondGradePricePerKg} грн`) : `${product.pricePerKg} грн`}
-              {(product.unit !== "kg" || quality !== "second" || product.secondGradePricePerKg !== undefined) && <span className="ml-1 text-base font-medium text-muted">/ {UNIT_LABELS[product.unit]}</span>}
+              {pricePerUnit} грн
+              <span className="ml-1 text-base font-medium text-muted">/ {UNIT_LABELS[product.unit]}</span>
             </p>
             <p
               className={`mt-2 text-sm font-semibold ${
@@ -116,7 +125,7 @@ export function Product() {
             ) : null}
 
             <div className="mt-6 space-y-6 border-t border-[color-mix(in_srgb,var(--color-green)_14%,transparent)] pt-6">
-              {product.category === 'fruits' ? <fieldset>
+              {hasSecondGrade ? <fieldset>
                 <legend className="text-sm font-semibold uppercase tracking-[0.1em] text-[var(--color-soft-green)]">Якість</legend>
                 <div className="mt-3 flex flex-wrap gap-3">
                   {(['selected', 'second'] as const).map((item) => (
@@ -128,32 +137,10 @@ export function Product() {
                 </div>
               </fieldset> : null}
 
-              <div>
-                <label htmlFor="weight" className="text-sm font-semibold uppercase tracking-[0.1em] text-[var(--color-green)]">
-                  Бажана кількість ({UNIT_LABELS[product.unit]})
-                </label>
-                <input
-                  id="weight"
-                  type="number"
-                  inputMode="decimal"
-                  min="1"
-                  max="999"
-                  step="0.5"
-                  value={weight}
-                  disabled={unavailable}
-                  onChange={(event) => setWeight(event.target.value)}
-                  aria-invalid={!validWeight}
-                  aria-describedby="weight-hint"
-                  className="mt-3 block w-36 rounded-md border border-[color-mix(in_srgb,var(--color-green)_25%,transparent)] bg-[var(--color-bg)] px-3 py-2.5 text-lg font-semibold text-[var(--color-text)] disabled:opacity-50"
-                />
-                <p id="weight-hint" className="mt-2 text-sm text-muted">
-                  {validWeight ? 'Фасування узгодимо під час замовлення.' : 'Введіть коректну кількість від 1 до 999 кг із кроком 0,5 кг.'}
-                </p>
-              </div>
               <div className="rounded-xl bg-[var(--color-cream)] p-5">
-                <p className="text-sm font-medium text-muted">Орієнтовна вартість</p>
+                <p className="text-sm font-medium text-muted">Орієнтовна вартість за {weightKg.toLocaleString('uk-UA')} {UNIT_LABELS[product.unit]}</p>
                 <p className="mt-1 font-display text-3xl text-[var(--color-green)]">
-                  {!validWeight ? 'Вкажіть вагу' : total === undefined ? 'Ціна уточнюється' : total.toLocaleString('uk-UA') + ' грн'}
+                  {total.toLocaleString('uk-UA')} грн
                 </p>
                 <p className="mt-2 text-sm text-muted">Наявність, остаточну вагу та суму підтвердимо під час замовлення.</p>
               </div>
@@ -179,12 +166,18 @@ export function Product() {
                 </div>
               ) : (
                 <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-                  <button type="button" disabled={!validWeight || total === undefined} onClick={() => { add(product.slug, product.secondGradePricePerKg !== undefined ? quality : 'selected', weightKg); setAdded(true) }} className="inline-flex flex-1 items-center justify-center rounded-md bg-[var(--color-green)] px-5 py-3 text-sm font-semibold text-[var(--color-bg)] disabled:opacity-50">{added ? 'Додано до кошика ✓' : 'Додати до кошика'}</button>
+                  {quantity === 0 ? (
+                    <button type="button" onClick={() => changeQuantity('increase')} className="min-h-11 w-full rounded-md bg-[var(--color-green)] px-5 py-3 text-sm font-semibold text-[var(--color-bg)] hover:bg-[var(--color-leaf)]">У кошик</button>
+                  ) : (
+                    <div className="flex min-h-11 w-full items-center justify-between gap-3" role="group" aria-label={`Кількість ${product.name}, ${QUALITY_LABELS[chosenQuality]}`}>
+                      <button type="button" aria-label="Зменшити кількість" onClick={() => changeQuantity('decrease')} className="min-h-11 min-w-11 rounded-md border border-[var(--color-green)] text-xl font-semibold text-[var(--color-green)]">−</button>
+                      <span className="text-center font-semibold" aria-live="polite">{quantity.toLocaleString('uk-UA')} {UNIT_LABELS[product.unit]}</span>
+                      <button type="button" aria-label="Збільшити кількість" disabled={quantity >= 999} onClick={() => changeQuantity('increase')} className="min-h-11 min-w-11 rounded-md bg-[var(--color-green)] text-xl font-semibold text-[var(--color-bg)] disabled:opacity-50">+</button>
+                    </div>
+                  )}
                   <a
-                    href={validWeight ? viberOrderUrl(message) : undefined}
-                    aria-disabled={!validWeight}
-                    tabIndex={validWeight ? undefined : -1}
-                    className={`inline-flex flex-1 items-center justify-center rounded-md bg-[var(--color-leaf)] px-5 py-3 text-sm font-semibold text-[var(--color-bg)] transition hover:brightness-110 ${validWeight ? '' : 'pointer-events-none opacity-50'}`}
+                    href={viberOrderUrl(message)}
+                    className={`inline-flex flex-1 items-center justify-center rounded-md bg-[var(--color-leaf)] px-5 py-3 text-sm font-semibold text-[var(--color-bg)] transition hover:brightness-110`}
                   >
                     Замовити у Viber
                   </a>
@@ -196,7 +189,7 @@ export function Product() {
                   </a>
                 </div>
               )}
-              {added && !unavailable && <Link to="/cart" className="inline-block text-sm font-semibold text-[var(--color-green)] underline">Перейти до кошика</Link>}
+              {quantity > 0 && !unavailable && <Link to="/cart" className="inline-block text-sm font-semibold text-[var(--color-green)] underline">Перейти до кошика</Link>}
             </div>
 
             <div className="mt-8">
