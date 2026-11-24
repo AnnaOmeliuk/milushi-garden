@@ -144,21 +144,23 @@ export function Cart() {
   }
 
   return <div className="section-pad"><div className="container-page max-w-3xl lg:max-w-none">
-    <h1 className="font-display text-4xl text-[var(--color-green)]">Кошик</h1>
+    {(success || entries.length === 0) && <h1 className="font-display text-4xl text-[var(--color-green)]">Кошик</h1>}
     {success ? <div role="status" className="mt-8 space-y-4">
       <h2 className="text-xl font-semibold text-[var(--color-green)]">Замовлення надіслано! 🌿</h2>
       <p>Дякуємо! Ми зв’яжемося з вами, щоб підтвердити наявність і домовитися про отримання.</p>
       <Link className="text-[var(--color-green)] underline" to="/catalog">Повернутися до каталогу</Link>
     </div> : entries.length === 0 ? <div className="mt-8 space-y-4"><p>Кошик поки порожній.</p><Link className="text-[var(--color-green)] underline" to="/catalog">Переглянути каталог</Link></div> : <>
-      <div className="mt-8 grid min-w-0 gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:items-start lg:gap-8">
-      <div className="min-w-0">
+      <div className="grid min-w-0 gap-x-8 gap-y-4 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:items-start">
+      <div className="lg:col-start-1 lg:row-start-1 flex flex-wrap items-center justify-between gap-2">
+      <h1 className="font-display text-4xl text-[var(--color-green)]">Кошик</h1>
+      {!success && entries.length > 0 && <button type="button" disabled={sending} className="inline-flex min-h-11 items-center gap-2 text-sm text-[#8a4b3a] hover:underline disabled:opacity-50" onClick={() => setConfirmClear(true)}><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5"><path d="M3 6h18M9 6V4h6v2M5 6l1 14h12l1-14M10 10v6M14 10v6" /></svg>Очистити кошик</button>}
+      </div>
+      <div className="min-w-0 lg:col-start-1 lg:row-start-2">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-[var(--color-soft-green)] bg-[var(--color-bg)] px-3 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] lg:hidden">
         <span className="font-semibold">Разом: {Number(total.toFixed(2))} грн</span>
         <button type="button" onClick={() => document.getElementById("checkout")?.scrollIntoView({ block: "start" })} className="min-h-11 rounded-md bg-[var(--color-green)] px-4 py-2 text-sm font-semibold text-[var(--color-bg)]">До оформлення</button>
       </div>
-      <div className="mb-3 flex justify-end">
-      {!success && entries.length > 0 && <button type="button" disabled={sending} className="inline-flex min-h-11 items-center gap-2 text-sm text-[#8a4b3a] hover:underline disabled:opacity-50" onClick={() => setConfirmClear(true)}><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5"><path d="M3 6h18M9 6V4h6v2M5 6l1 14h12l1-14M10 10v6M14 10v6" /></svg>Очистити кошик</button>}
-      </div>
+
     {confirmClear && !success && entries.length > 0 && <div role="group" aria-label="Підтвердження очищення кошика" className="mb-4 rounded-lg border border-[var(--color-soft-green)] bg-[var(--color-cream)] p-4">
       <p className="text-sm">Видалити всі товари з кошика?</p>
       <div className="mt-3 flex flex-wrap gap-2">
@@ -215,7 +217,7 @@ export function Cart() {
       })}</div>
       <div className="mt-6"><Link to="/catalog" className="text-[var(--color-green)] underline">Продовжити покупки</Link></div>
       </div>
-      <div className="min-w-0 lg:self-start lg:[@media(min-height:900px)]:sticky lg:top-[calc(var(--header-h)+1rem)]">
+      <div className="min-w-0 lg:col-start-2 lg:row-start-2 lg:self-start lg:[@media(min-height:900px)]:sticky lg:top-[calc(var(--header-h)+1rem)]">
       <div className="rounded-xl border border-[var(--color-soft-green)] bg-[var(--color-bg)] p-4 sm:p-5">
       {blocked && <p className="mt-3 text-sm text-[#8a4b3a]">У кошику є товар не в наявності. Видаліть його, щоб оформити замовлення.</p>}
       <form id="checkout" noValidate onSubmit={submitOrder} className="space-y-4 scroll-mt-[calc(var(--header-h)+1rem)]">
