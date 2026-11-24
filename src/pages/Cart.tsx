@@ -153,7 +153,7 @@ export function Cart() {
       <div className="grid min-w-0 gap-x-8 gap-y-4 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:items-start">
       <div className="lg:col-start-1 lg:row-start-1 flex flex-wrap items-center justify-between gap-2">
       <h1 className="font-display text-4xl text-[var(--color-green)]">Кошик</h1>
-      {!success && entries.length > 0 && <button type="button" disabled={sending} className="inline-flex min-h-11 items-center gap-2 pt-1 text-sm text-[#8a4b3a] hover:underline disabled:opacity-50" onClick={() => setConfirmClear(true)}><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5"><path d="M3 6h18M9 6V4h6v2M5 6l1 14h12l1-14M10 10v6M14 10v6" /></svg>Очистити кошик</button>}
+      {!success && entries.length > 0 && <button type="button" disabled={sending} className="inline-flex min-h-11 items-center gap-2 translate-y-2 text-sm text-[#8a4b3a] hover:underline disabled:opacity-50" onClick={() => setConfirmClear(true)}><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5"><path d="M3 6h18M9 6V4h6v2M5 6l1 14h12l1-14M10 10v6M14 10v6" /></svg>Очистити кошик</button>}
       </div>
       <div className="min-w-0 lg:col-start-1 lg:row-start-2">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-[var(--color-soft-green)] bg-[var(--color-bg)] px-3 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] lg:hidden">
