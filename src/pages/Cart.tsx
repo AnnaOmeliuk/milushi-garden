@@ -143,7 +143,7 @@ export function Cart() {
     }
   }
 
-  return <div className="section-pad"><div className="container-page max-w-3xl">
+  return <div className="section-pad"><div className="container-page max-w-3xl lg:max-w-none">
     <div className="flex flex-wrap items-center justify-between gap-3">
       <h1 className="font-display text-4xl text-[var(--color-green)]">Кошик</h1>
       {!success && entries.length > 0 && <button type="button" disabled={sending} className="inline-flex min-h-11 items-center gap-2 text-sm text-[#8a4b3a] hover:underline disabled:opacity-50" onClick={() => setConfirmClear(true)}><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5"><path d="M3 6h18M9 6V4h6v2M5 6l1 14h12l1-14M10 10v6M14 10v6" /></svg>Очистити кошик</button>}
@@ -160,7 +160,9 @@ export function Cart() {
       <p>Дякуємо! Ми зв’яжемося з вами, щоб підтвердити наявність і домовитися про отримання.</p>
       <Link className="text-[var(--color-green)] underline" to="/catalog">Повернутися до каталогу</Link>
     </div> : entries.length === 0 ? <div className="mt-8 space-y-4"><p>Кошик поки порожній.</p><Link className="text-[var(--color-green)] underline" to="/catalog">Переглянути каталог</Link></div> : <>
-      <div className="mt-8 space-y-4">{entries.map(item => {
+      <div className="mt-8 grid min-w-0 gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:items-start lg:gap-8">
+      <div className="min-w-0">
+      <div className="space-y-4">{entries.map(item => {
         const unavailable = getEffectiveAvailability(item.product) === 'out_of_stock'
         const price = cartPrice(item.product, item.quality)
         return <div key={item.slug + item.quality} className="rounded-xl border border-[var(--color-soft-green)] p-4">
@@ -200,15 +202,18 @@ export function Cart() {
                   </div>
                 </div>
               })()}
-          <div className="mt-4 flex items-center justify-between gap-3">
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
             <QuantityInput quantity={item.quantity} unit={UNIT_LABELS[item.product.unit]} onUpdate={value => update(item.slug, item.quality, value)} />
             <strong>{Number((price * item.quantity).toFixed(2))} грн</strong>
           </div>
         </div>
       })}</div>
-      <div className="mt-6 flex justify-between text-xl font-semibold"><span>Разом</span><span>{Number(total.toFixed(2))} грн</span></div>
+      <div className="mt-6"><Link to="/catalog" className="text-[var(--color-green)] underline">Продовжити покупки</Link></div>
+      </div>
+      <div className="min-w-0 lg:self-start lg:[@media(min-height:900px)]:sticky lg:top-[calc(var(--header-h)+1rem)]">
+      <div className="rounded-xl border border-[var(--color-soft-green)] bg-[var(--color-bg)] p-4 sm:p-5">
       {blocked && <p className="mt-3 text-sm text-[#8a4b3a]">У кошику є товар не в наявності. Видаліть його, щоб оформити замовлення.</p>}
-      <form noValidate onSubmit={submitOrder} className="mt-8 space-y-4 rounded-xl border border-[var(--color-soft-green)] p-5">
+      <form id="checkout" noValidate onSubmit={submitOrder} className="space-y-4 scroll-mt-[calc(var(--header-h)+1rem)]">
         <h2 className="text-xl font-semibold text-[var(--color-green)]">Оформлення замовлення</h2>
         <label className="block text-sm font-medium">Ваше ім’я *
           <input required minLength={2} maxLength={80} autoComplete="name" value={name} onChange={event => { pendingId.current = null; setName(event.target.value) }} onBlur={() => setNameTouched(true)} aria-invalid={nameTouched && !nameValid} className="mt-1 block w-full rounded-md border p-3" placeholder="Ім’я" />
@@ -233,10 +238,17 @@ export function Cart() {
         <div className="hidden" aria-hidden="true"><label>Website<input tabIndex={-1} autoComplete="off" value={website} onChange={event => setWebsite(event.target.value)} /></label></div>
         {delivery === 'lutsk' && total < 500 && <p className="text-sm text-[#8a4b3a]">Для доставки до Луцька сума замовлення має бути від 500 грн.</p>}
         {error && <p role="alert" className="text-sm text-[#8a4b3a]">{error}</p>}
+        <div className="flex justify-between gap-3 border-t border-[var(--color-soft-green)] pt-4 text-xl font-semibold"><span>Разом</span><span>{Number(total.toFixed(2))} грн</span></div>
         <button type="submit" disabled={sending || blocked || !available.length || (delivery === 'lutsk' && total < 500)} className="min-h-11 w-full rounded-md bg-[var(--color-green)] px-5 py-3 font-semibold text-[var(--color-bg)] disabled:opacity-50">{sending ? 'Надсилаємо…' : 'Підтвердити замовлення'}</button>
         <p className="text-sm text-muted">Оплата при отриманні. Після відправлення ми зв’яжемося з вами для підтвердження деталей.</p>
       </form>
-      <div className="mt-6 flex justify-between"><Link to="/catalog" className="text-[var(--color-green)] underline">Продовжити покупки</Link></div>
+      </div>
+      </div>
+      </div>
+      <div className="sticky bottom-0 z-20 mt-6 flex flex-wrap items-center justify-between gap-2 border-t border-[var(--color-soft-green)] bg-[var(--color-bg)] px-3 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] lg:hidden">
+        <span className="font-semibold">Разом: {Number(total.toFixed(2))} грн</span>
+        <button type="button" onClick={() => document.getElementById("checkout")?.scrollIntoView({ block: "start" })} className="min-h-11 rounded-md bg-[var(--color-green)] px-4 py-2 text-sm font-semibold text-[var(--color-bg)]">До оформлення</button>
+      </div>
     </>}
   </div></div>
 }
