@@ -124,19 +124,26 @@ export function Cart() {
         body: JSON.stringify({ requestId: pendingId.current, name, phone, delivery, comment, website, items: items.map(({ slug, quality, quantity }) => ({ slug, quality, quantity })) }),
       })
       if (!response.ok) {
-        const text = await response.text()
-        let message = 'Не вдалося надіслати замовлення. Спробуйте пізніше.'
-        try { const data = JSON.parse(text) as { message?: string }; if (data.message) message = data.message } catch { /* Do not expose internal server responses */ }
+        console.error('Order API returned HTTP', response.status)
+        let message = 'Не вдалося надіслати замовлення. Спробуйте ще раз.'
+        if (response.status >= 500) message = 'Виникла технічна помилка. Спробуйте трохи пізніше.'
         if (response.status === 429) message = 'Забагато спроб. Зачекайте хвилину та повторіть.'
-        if (response.status === 404) message = 'Сервіс замовлень тимчасово недоступний.'
-        throw new Error(message)
+        if (response.status === 404) message = 'Сервіс замовлень тимчасово недоступний. Спробуйте трохи пізніше.'
+        setError(message + ' Ваш кошик і введені дані збережено.')
+        return
       }
       pendingId.current = null
       clear()
       setSuccess(true)
       window.scrollTo({ top: 0, behavior: 'instant' })
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : 'Помилка з’єднання. Спробуйте ще раз.')
+      console.error('Order submission failed', cause instanceof Error ? cause.name : 'Unknown error')
+      const message = navigator.onLine === false
+        ? 'Перевірте підключення до інтернету та спробуйте ще раз.'
+        : cause instanceof TypeError
+          ? 'Не вдалося надіслати замовлення. Спробуйте ще раз.'
+          : 'Виникла технічна помилка. Спробуйте трохи пізніше.'
+      setError(message + ' Ваш кошик і введені дані збережено.')
     } finally {
       submitLock.current = false
       setSending(false)
