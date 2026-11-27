@@ -1,10 +1,14 @@
 import { useEffect, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { site } from '../data/site'
+import { useCart } from '../context/CartContext'
+import { useFavorites } from '../context/FavoritesContext'
 
 export function Header() {
   const [open, setOpen] = useState(false)
   const location = useLocation()
+  const { items } = useCart()
+  const { favorites } = useFavorites()
 
   useEffect(() => {
     setOpen(false)
@@ -19,8 +23,8 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-[color-mix(in_srgb,var(--color-green)_14%,transparent)] bg-[color-mix(in_srgb,var(--color-bg)_92%,transparent)] backdrop-blur-md">
-      <div className="container-page flex h-[var(--header-h)] items-center justify-between gap-4">
-        <Link to="/" className="font-display text-lg tracking-[0.04em] text-[var(--color-green)] sm:text-xl">
+      <div className="container-page flex h-[var(--header-h)] items-center justify-between gap-2 lg:gap-4">
+        <Link to="/" className="min-w-0 font-display text-base tracking-[0.04em] text-[var(--color-green)] sm:text-xl">
           {site.brand}
         </Link>
 
@@ -50,9 +54,13 @@ export function Header() {
           )}
         </nav>
 
+        <div className="ml-auto flex shrink-0 items-center gap-2 md:ml-0">
+        <Link to="/favorites" aria-label={`Улюблене, ${favorites.length} товарів`} title="Улюблене" className="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center gap-1 rounded-md border border-[var(--color-green)] px-1.5 text-sm font-semibold text-[var(--color-green)] sm:px-3"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78Z" /></svg><span>{favorites.length}</span></Link>
+        <Link to="/cart" aria-label={`Кошик, ${items.length} позицій`} title="Кошик" className="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center gap-1 rounded-md border border-[var(--color-green)] px-1.5 sm:px-3 text-sm font-semibold text-[var(--color-green)]"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M2 3h3l3 13h12l2-10H6"/><circle cx="9" cy="21" r="1"/><circle cx="19" cy="21" r="1"/></svg><span>{items.length}</span></Link>
+
         <button
           type="button"
-          className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-[color-mix(in_srgb,var(--color-green)_25%,transparent)] text-[var(--color-green)] md:hidden"
+          className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-md border border-[color-mix(in_srgb,var(--color-green)_25%,transparent)] text-[var(--color-green)] md:hidden"
           aria-expanded={open}
           aria-controls="mobile-nav"
           aria-label={open ? 'Закрити меню' : 'Відкрити меню'}
@@ -67,6 +75,7 @@ export function Header() {
             )}
           </svg>
         </button>
+        </div>
       </div>
 
       {open ? (

@@ -5,7 +5,7 @@ const kgPacks = [
   { id: '5kg', label: 'Сітка 5 кг', kg: 5 },
 ]
 
-// Фото конкретних сортів; для Айдареду й Рубіну тимчасово використовуємо ілюстрації.
+// Фото конкретних сортів.
 const apples = [
   { slug: 'skifske-zoloto', name: 'Скіфське золото', note: 'Жовті, солодкі, з щільною соковитою м’якоттю' },
   { slug: 'raika', name: 'Райка', note: 'Темно-червоні, кисло-солодкі та хрумкі' },
@@ -21,8 +21,8 @@ const apples = [
 ] as const
 
 const applePhotos: Record<string, string[]> = {
-  'idared': ['/images/products/idared.svg'],
-  'rubin': ['/images/products/rubin.svg'],
+  'idared': ['/images/products/idared-1.webp'],
+  'rubin': ['/images/products/rubin-1.webp'],
   'skifske-zoloto': ['/images/products/skifske-zoloto-1.webp', '/images/products/skifske-zoloto-2.webp', '/images/products/skifske-zoloto-3.webp', '/images/products/skifske-zoloto-4.webp', '/images/products/skifske-zoloto-5.webp', '/images/products/skifske-zoloto-6.webp'],
   'raika': ['/images/products/raika-1.webp', '/images/products/raika-2.webp'],
   'champion': ['/images/products/champion-1.webp', '/images/products/champion-2.webp', '/images/products/champion-3.webp'],
@@ -78,7 +78,7 @@ export const products: Product[] = [
     category: 'vegetables',
     shortDescription: 'Білокачанна капуста з нашого сімейного господарства.',
     description: 'Білокачанна капуста, вирощена в нашому господарстві в селі Милуші на Волині. Кількість і спосіб отримання узгоджуємо під час замовлення.',
-    images: ['/images/products/kapusta-bilokachanna.svg'],
+    images: ['/images/products/kapusta-bilokachanna-1.webp'],
     pricePerKg: 20,
     unit: 'kg',
     availability: 'in_stock',
@@ -96,6 +96,23 @@ export function getEffectiveAvailability(product: Product): Availability {
 }
 
 export function getFeaturedProducts(): Product[] {
-  return products.filter((product) => product.featured)
+  const featured = products.filter(product => product.featured && getEffectiveAvailability(product) !== 'out_of_stock')
+  const groups = new Map<Product['category'], Product[]>()
+  for (const product of featured) {
+    const group = groups.get(product.category) ?? []
+    group.push(product)
+    groups.set(product.category, group)
+  }
+
+  // Rotate categories first, then fill the remaining slots with other featured items.
+  const selected: Product[] = []
+  while (selected.length < 6 && [...groups.values()].some(group => group.length > 0)) {
+    for (const group of groups.values()) {
+      const product = group.shift()
+      if (product) selected.push(product)
+      if (selected.length === 6) break
+    }
+  }
+  return selected
 }
 

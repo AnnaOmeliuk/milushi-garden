@@ -66,8 +66,10 @@ export function Home() {
             </Link>
           </div>
           <div className="mt-6 grid gap-5 sm:mt-8 sm:grid-cols-2 lg:grid-cols-3">
-            {featured.map((product) => (
-              <ProductCard key={product.slug} product={product} />
+            {featured.map((product, index) => (
+              <div key={product.slug} className={index >= 4 ? 'hidden sm:block sm:h-full' : 'h-full'}>
+                <ProductCard product={product} />
+              </div>
             ))}
           </div>
         </div>
@@ -76,11 +78,12 @@ export function Home() {
       <section aria-labelledby="how-to-order-title" className="border-y border-[color-mix(in_srgb,var(--color-green)_12%,transparent)] bg-[color-mix(in_srgb,var(--color-soft-green)_10%,transparent)] py-10 sm:py-14">
         <div className="container-page">
           <h2 id="how-to-order-title" className="font-display text-3xl text-[var(--color-green)] sm:text-4xl">Як замовити</h2>
-          <div className="mt-6 grid gap-5 sm:grid-cols-3">
+          <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {[
-              { step: '01', title: 'Оберіть товар', text: 'Перегляньте актуальні продукти в каталозі.' },
-              { step: '02', title: 'Вкажіть кількість', text: 'Вкажіть потрібну кількість та доступні параметри товару.' },
-              { step: '03', title: 'Зв’яжіться з нами', text: 'Надішліть готове повідомлення у Viber або зателефонуйте нам.' },
+              { step: '01', title: 'Оберіть продукцію', text: 'Знайдіть у каталозі бажані товари.' },
+              { step: '02', title: 'Додайте в кошик', text: 'Оберіть доступну якість та необхідну кількість.' },
+              { step: '03', title: 'Оформіть замовлення', text: 'Заповніть контактні дані та оберіть спосіб отримання.' },
+              { step: '04', title: 'Отримайте продукцію', text: 'Ми зв’яжемося з вами для підтвердження замовлення та узгодження видачі.' },
             ].map((item) => (
               <div key={item.step} className="rounded-xl bg-[var(--color-bg)] p-5">
                 <p className="text-sm font-semibold text-[var(--color-soft-green)]">{item.step}</p>
@@ -180,7 +183,7 @@ export function Home() {
           <div className="rounded-2xl bg-[var(--color-green)] p-8 text-[var(--color-bg)]">
             <p className="font-display text-2xl">Готові замовити?</p>
             <p className="mt-3 text-[color-mix(in_srgb,var(--color-bg)_82%,transparent)]">
-              Оберіть товар і зручний спосіб замовлення: напишіть у Viber або зателефонуйте.
+              Оберіть товари в каталозі, додайте їх у кошик та оформіть замовлення на сайті.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <Link
